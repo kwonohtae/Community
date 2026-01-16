@@ -2,19 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>공지사항</title>
+<title>공지사항 목록</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 
-<div class="container">
-    <h1 class="mt-5 mb-3">게시판</h1>
+<div class="container mt-5">
+    <h1 class="mb-4">공지사항</h1>
     <table class="table table-hover">
         <thead class="thead-dark">
             <tr>
                 <th>번호</th>
                 <th>제목</th>
-                <th>작성자</th>
                 <th>작성일</th>
             </tr>
         </thead>
@@ -22,28 +21,25 @@
             <!-- 예시 데이터 -->
             <tr>
                 <td>1</td>
-                <td><a href="/board/1">첫 번째 게시글입니다.</a></td>
-                <td>테스터</td>
+                <td><a href="/notice/1">첫 번째 공지사항입니다.</a></td>
                 <td>2026-01-16</td>
             </tr>
-            <!-- 게시글 루프 -->
-            <tr th:each="board : ${boardList}">
-                <td th:text="${board.id}"></td>
-                <td><a th:href="@{/board/{id}(id=${board.id})}" th:text="${board.title}"></a></td>
-                <td th:text="${board.author}"></td>
-                <td th:text="${#temporals.format(board.createdDate, 'yyyy-MM-dd')}"></td>
+            <!-- 공지사항 루프 -->
+            <tr th:each="notice : ${noticeList}">
+                <td th:text="${notice.id}"></td>
+                <td><a th:href="@{/notice/{id}(id=${notice.id})}" th:text="${notice.title}"></a></td>
+                <td th:text="${#temporals.format(notice.createdDate, 'yyyy-MM-dd')}"></td>
             </tr>
         </tbody>
     </table>
 
     <div class="d-flex justify-content-end">
-        <a href="/board/writePage" class="btn btn-primary">글쓰기</a>
+        <a href="/notice/writePage" class="btn btn-primary">글쓰기</a>
     </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 </body>
 </html>

@@ -1,4 +1,4 @@
-package com.Board.BoardTest.main.Controller;
+package com.Board.BoardTest.main.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-public class mainController {
+public class MainController {
 
 	@GetMapping("/")
 	public String getMain() {

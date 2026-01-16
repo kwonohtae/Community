@@ -2,11 +2,43 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>메인 화면</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #f8f9fa;
+    }
+    .main-container {
+        text-align: center;
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .main-container h1 {
+        margin-bottom: 30px;
+        color: #343a40;
+    }
+    .main-container .btn {
+        margin: 10px;
+        width: 200px; /* Adjust button width as needed */
+    }
+</style>
 </head>
 <body>
-여기서 메뉴와 로그인 화면이 생성 되어야 합니다.
-<br>
-<a href="/board/list">공지사항</a>
+
+<div class="main-container">
+    <h1>환영합니다!</h1>
+    <a href="/user/loginPage" class="btn btn-primary btn-lg">로그인</a>
+    <a href="/notice/list" class="btn btn-info btn-lg">공지사항</a>
+    <a href="/board/list" class="btn btn-success btn-lg">게시판</a>
+    <a href="/admin/dashboard" class="btn btn-danger btn-lg">관리자</a>
+</div>
+
 </body>
 </html>
