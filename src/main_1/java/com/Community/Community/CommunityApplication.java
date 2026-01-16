@@ -1,13 +1,13 @@
-package com.Board.BoardTest;
+package com.community.community;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BoardTestApplication {
+public class CommunityApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BoardTestApplication.class, args);
+		SpringApplication.run(CommunityApplication.class, args);
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.Board.BoardTest.admin.controller;
+package com.community.community.admin.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
