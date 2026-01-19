@@ -23,6 +23,11 @@ public class AdminController {
         return "admin/post-list";
     }
 
+    @GetMapping("/notices")
+    public String noticeManagement() {
+        return "admin/notice-list";
+    }
+
     @GetMapping("/stats")
     public String statistics() {
         return "admin/stats";

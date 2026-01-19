@@ -1,35 +1,32 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
 <head>
-<meta charset="UTF-8">
-<title>게시글 상세</title>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>게시글 상세</title>
 </head>
+
 <body>
+    <th:block layout:fragment="content">
+        <h1 class="mb-4">게시글 상세</h1>
 
-<div class="container mt-5">
-    <h1 class="mb-4">게시글 상세</h1>
-    
-    <div class="card">
-        <div class="card-header">
-            <h4 class="card-title" th:text="${board.title}">게시글 제목</h4>
-            <small class="text-muted" th:text="'작성자: ' + ${board.author} + ' | 작성일: ' + ${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">작성자: 테스터 | 작성일: 2026-01-16</small>
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title" th:text="${board.title}">게시글 제목</h4>
+                <small class="text-muted" th:text="'작성자: ' + ${board.author} + ' | 작성일: ' + ${#temporals.format(board.createdDate, 'yyyy-MM-dd')}">작성자: 테스터 | 작성일: 2026-01-16</small>
+            </div>
+            <div class="card-body">
+                <p class="card-text" th:text="${board.content}">게시글 내용이 여기에 표시됩니다.</p>
+            </div>
         </div>
-        <div class="card-body">
-            <p class="card-text" th:text="${board.content}">게시글 내용이 여기에 표시됩니다.</p>
+
+        <div class="mt-4">
+            <a href="/board/list" class="btn btn-primary">목록으로</a>
+            <!-- 작성자 또는 관리자만 보이도록 처리 필요 -->
+            <a href="#" class="btn btn-info">수정</a>
+            <a href="#" class="btn btn-danger">삭제</a>
         </div>
-    </div>
-
-    <div class="mt-4">
-        <a href="/board/list" class="btn btn-primary">목록으로</a>
-        <!-- 작성자 또는 관리자만 보이도록 처리 필요 -->
-        <a href="#" class="btn btn-info">수정</a>
-        <a href="#" class="btn btn-danger">삭제</a>
-    </div>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </th:block>
 </body>
 </html>

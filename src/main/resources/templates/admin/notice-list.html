@@ -4,19 +4,18 @@
       layout:decorate="~{layout}">
 
 <head>
-    <title>게시글 관리</title>
+    <title>공지글 관리</title>
 </head>
 
 <body>
     <th:block layout:fragment="content">
-        <h1 class="mb-4">게시글 관리</h1>
+        <h1 class="mb-4">공지글 관리</h1>
         <table class="table table-hover">
             <thead class="thead-dark">
                 <tr>
                     <th>#</th>
                     <th>제목</th>
                     <th>작성자</th>
-                    <th>게시판</th>
                     <th>작성일</th>
                     <th>관리</th>
                 </tr>
@@ -25,23 +24,21 @@
                 <!-- 예시 데이터 -->
                 <tr>
                     <td>1</td>
-                    <td>첫 번째 게시글입니다.</td>
-                    <td>테스터</td>
-                    <td>자유게시판</td>
+                    <td>첫 번째 공지글입니다.</td>
+                    <td>관리자</td>
                     <td>2026-01-16</td>
                     <td>
                         <button class="btn btn-sm btn-info">수정</button>
                         <button class="btn btn-sm btn-danger">삭제</button>
                     </td>
                 </tr>
-                <!-- 게시글 목록 루프 -->
+                <!-- 공지글 목록 루프 -->
                 <!--
-                <tr th:each="post, stat : ${postList}">
+                <tr th:each="notice, stat : ${noticeList}">
                     <td th:text="${stat.count}"></td>
-                    <td th:text="${post.title}"></td>
-                    <td th:text="${post.author}"></td>
-                    <td th:text="${post.boardName}"></td>
-                    <td th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd')}"></td>
+                    <td th:text="${notice.title}"></td>
+                    <td th:text="${notice.author}"></td>
+                    <td th:text="${#temporals.format(notice.createdDate, 'yyyy-MM-dd')}"></td>
                     <td>
                         <button class="btn btn-sm btn-info">수정</button>
                         <button class="btn btn-sm btn-danger">삭제</button>

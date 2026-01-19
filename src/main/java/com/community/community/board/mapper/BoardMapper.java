@@ -1,14 +1,14 @@
 package com.community.community.board.mapper;
 
-import java.util.List;
-
+import com.community.community.board.dto.BoardRequestDto;
+import com.community.community.board.dto.BoardResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 
-import com.community.community.board.dto.BoardDto;
+import java.util.List;
 
 @Mapper
 public interface BoardMapper {
-    List<BoardDto> getBoardList();
-    BoardDto getBoardDetail(int boardSeq);
-    void insertBoard(BoardDto boardDto);
+    List<BoardResponseDto> findAll();
+    BoardResponseDto findById(int id);
+    void save(BoardRequestDto boardRequestDto);
 }

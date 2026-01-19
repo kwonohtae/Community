@@ -39,6 +39,11 @@
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 		<dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>4.0.1</version>

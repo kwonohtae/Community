@@ -1,32 +1,32 @@
 package com.community.community.board.service.impl;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.community.community.board.dto.BoardDto;
+import com.community.community.board.dto.BoardRequestDto;
+import com.community.community.board.dto.BoardResponseDto;
 import com.community.community.board.mapper.BoardMapper;
 import com.community.community.board.service.BoardService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@RequiredArgsConstructor
 @Service
 public class BoardServiceImpl implements BoardService {
 
-    @Autowired
-    private BoardMapper boardMapper;
+    private final BoardMapper boardMapper;
 
     @Override
-    public List<BoardDto> getBoardList() {
-        return boardMapper.getBoardList();
+    public List<BoardResponseDto> findAll() {
+        return boardMapper.findAll();
     }
 
     @Override
-    public BoardDto getBoardDetail(int boardSeq) {
-        return boardMapper.getBoardDetail(boardSeq);
+    public BoardResponseDto findById(int id) {
+        return boardMapper.findById(id);
     }
 
     @Override
-    public void insertBoard(BoardDto boardDto) {
-        boardMapper.insertBoard(boardDto);
+    public void save(BoardRequestDto boardRequestDto) {
+        boardMapper.save(boardRequestDto);
     }
 }

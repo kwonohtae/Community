@@ -1,11 +1,12 @@
 package com.community.community.board.service;
 
+import com.community.community.board.dto.BoardRequestDto;
+import com.community.community.board.dto.BoardResponseDto;
+
 import java.util.List;
 
-import com.community.community.board.dto.BoardDto;
-
 public interface BoardService {
-    List<BoardDto> getBoardList();
-    BoardDto getBoardDetail(int boardSeq);
-    void insertBoard(BoardDto boardDto);
+    List<BoardResponseDto> findAll();
+    BoardResponseDto findById(int id);
+    void save(BoardRequestDto boardRequestDto);
 }

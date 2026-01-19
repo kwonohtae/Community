@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
-<meta charset="UTF-8">
 <title>메인 화면</title>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <style>
     body {
         display: flex;
@@ -32,6 +32,7 @@
 </head>
 <body>
 
+<th:block layout:fragment="content">
 <div class="main-container">
     <h1>환영합니다!</h1>
     <a href="/user/loginPage" class="btn btn-primary btn-lg">로그인</a>
@@ -39,6 +40,7 @@
     <a href="/board/list" class="btn btn-success btn-lg">게시판</a>
     <a href="/admin/dashboard" class="btn btn-danger btn-lg">관리자</a>
 </div>
+</th:block>
 
 </body>
 </html>
