@@ -26,10 +26,11 @@
                     <td>2026-01-16</td>
                 </tr>
                 <!-- 공지사항 루프 -->
-                <tr th:each="notice : ${noticeList}">
-                    <td th:text="${notice.id}"></td>
-                    <td><a th:href="@{/notice/{id}(id=${notice.id})}" th:text="${notice.title}"></a></td>
-                    <td th:text="${#temporals.format(notice.createdDate, 'yyyy-MM-dd')}"></td>
+                <tr th:each="notice, stat : ${noticeList}">
+                    <td th:text="${stat.count}"></td>
+                    <!-- <td th:text="${notice.noticeId}"></td> -->
+                    <td><a th:href="@{/notice/{noticeId}(noticeId=${notice.noticeId})}" th:text="${notice.title}"></a></td>
+                    <td th:text="${#temporals.format(notice.insertDate, 'yyyy-MM-dd')}"></td>
                 </tr>
             </tbody>
         </table>

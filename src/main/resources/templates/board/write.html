@@ -10,7 +10,7 @@
 <body>
     <th:block layout:fragment="content">
         <h1 class="mb-4">게시글 작성</h1>
-        <form action="/board/save" method="post">
+        <form action="/board/save" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="title">제목</label>
                 <input type="text" class="form-control" id="title" name="title" required>
@@ -23,9 +23,42 @@
                 <label for="content">내용</label>
                 <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
             </div>
+            <div class="form-group">
+                <label for="attachment">첨부파일</label>
+                <input type="file" class="form-control-file" id="attachment" name="attachment">
+                <div id="file-info-display" class="form-text text-muted mt-2"></div>
+            </div>
             <button type="submit" class="btn btn-primary">등록</button>
             <a href="/board/list" class="btn btn-secondary">목록으로</a>
         </form>
+
+        <script>
+            document.getElementById('attachment').addEventListener('change', function(event) {
+                const fileInfoDiv = document.getElementById('file-info-display');
+                const file = event.target.files[0];
+
+                if (file) {
+                    const fileName = file.name;
+                    const fileExtension = fileName.split('.').pop();
+                    const fileSize = formatBytes(file.size);
+
+                    fileInfoDiv.innerHTML = `
+                        <strong>선택된 파일:</strong> ${fileName} | <strong>확장자:</strong> .${fileExtension} | <strong>크기:</strong> ${fileSize}
+                    `;
+                } else {
+                    fileInfoDiv.innerHTML = '';
+                }
+            });
+
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+        </script>
     </th:block>
 </body>
 </html>

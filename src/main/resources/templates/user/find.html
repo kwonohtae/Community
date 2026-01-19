@@ -5,14 +5,6 @@
 <head>
     <title>아이디/비밀번호 찾기</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f8f9fa;
-        }
         .form-container {
             width: 100%;
             max-width: 500px;
@@ -20,12 +12,11 @@
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: 5rem auto; /* 중앙 정렬 및 상단 여백 추가 */
         }
     </style>
 </head>
-<body>
-
-<th:block layout:fragment="content">
+<div layout:fragment="content">
     <div class="form-container">
         <h2 class="text-center mb-4">아이디/비밀번호 찾기</h2>
 
@@ -73,6 +64,5 @@
             <a href="/user/loginPage">로그인 페이지로 돌아가기</a>
         </div>
     </div>
-</th:block>
-</body>
+</div>
 </html>

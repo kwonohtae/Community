@@ -6,7 +6,7 @@ import com.community.community.board.dto.BoardResponseDto;
 import java.util.List;
 
 public interface BoardService {
-    List<BoardResponseDto> findAll();
+    List<BoardResponseDto> findAll(BoardRequestDto boardRequestDto);
     BoardResponseDto findById(int id);
     void save(BoardRequestDto boardRequestDto);
 }

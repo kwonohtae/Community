@@ -16,8 +16,8 @@ public class BoardServiceImpl implements BoardService {
     private final BoardMapper boardMapper;
 
     @Override
-    public List<BoardResponseDto> findAll() {
-        return boardMapper.findAll();
+    public List<BoardResponseDto> findAll(BoardRequestDto boardRequestDto) {
+        return boardMapper.findAll(boardRequestDto);
     }
 
     @Override

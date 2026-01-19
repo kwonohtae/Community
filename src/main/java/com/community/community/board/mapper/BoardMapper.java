@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface BoardMapper {
-    List<BoardResponseDto> findAll();
+    List<BoardResponseDto> findAll(BoardRequestDto boardRequestDto);
     BoardResponseDto findById(int id);
     void save(BoardRequestDto boardRequestDto);
 }

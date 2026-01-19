@@ -1,13 +1,13 @@
-package com.community.community.board.dto;
+package com.community.community.notice.dto;
 
 import java.time.LocalDateTime;
+
 import lombok.Data;
 
 @Data
-public class BoardResponseDto {
-	
-	
-    private int boardId;
+public class NoticeResponseDto {
+
+	private int noticeId;
     private int communityId;
     private String userId;
     private String title;
@@ -19,5 +19,4 @@ public class BoardResponseDto {
     private LocalDateTime insertDate;
     private String updateUser;
     private LocalDateTime updateDate;
-
 }

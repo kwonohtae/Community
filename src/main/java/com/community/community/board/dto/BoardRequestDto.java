@@ -1,10 +1,15 @@
 package com.community.community.board.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.Data;
 
 @Data
 public class BoardRequestDto {
-    private String title;
+    
+	private String title;
     private String writer;
     private String detail;
+    private LocalDateTime insertDate;
+    
 }

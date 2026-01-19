@@ -4,22 +4,29 @@ import com.community.community.board.dto.BoardRequestDto;
 import com.community.community.board.dto.BoardResponseDto;
 import com.community.community.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/board")
 public class BoardController {
 
+	@Autowired
     private final BoardService boardService;
 
     @GetMapping("/list")
     public String boardList(Model model) {
-        List<BoardResponseDto> boardList = boardService.findAll();
+    	BoardRequestDto boardRequestDto = new BoardRequestDto(); 
+        List<BoardResponseDto> boardList = boardService.findAll(boardRequestDto);
+        log.info("데이터 확인 :::: {}" , boardList.size());
         model.addAttribute("boardList", boardList);
         return "board/list";
     }
@@ -35,9 +42,12 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    @GetMapping("/{id}")
-    public String boardDetail(@PathVariable int id, Model model) {
-        BoardResponseDto board = boardService.findById(id);
+    @GetMapping("/{boardId}")
+    public String boardDetail(@PathVariable int boardId, Model model) {
+        
+    	log.info("진입 확인 ::: !! {}", boardId);
+    	
+    	BoardResponseDto board = boardService.findById(boardId);
         model.addAttribute("board", board);
         return "board/detail";
     }
