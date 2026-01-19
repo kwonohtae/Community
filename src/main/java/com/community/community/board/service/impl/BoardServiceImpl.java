@@ -29,4 +29,9 @@ public class BoardServiceImpl implements BoardService {
     public void save(BoardRequestDto boardRequestDto) {
         boardMapper.save(boardRequestDto);
     }
+
+    @Override
+    public int getTotalCount(BoardRequestDto boardRequestDto) {
+        return boardMapper.countAll(boardRequestDto);
+    }
 }

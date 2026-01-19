@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.community.community.user.mapper.UserMapper">
+  <select id="findAll" parameterType="com.community.community.user.dto.UserRequestDto" resultType="com.community.community.user.dto.UserResponseDto">
+    SELECT
+        user_id,
+        user_name,
+        user_nick_name,
+        user_phone,
+        user_email,
+        use_yn,
+        role,
+        insert_date,
+        update_date
+    FROM user
+    ORDER BY insert_date DESC
+    LIMIT #{pageSize} OFFSET #{offset}
+  </select>
+
+  <select id="countAll" parameterType="com.community.community.user.dto.UserRequestDto" resultType="int">
+      SELECT COUNT(*)
+      FROM user
+  </select>
+</mapper>

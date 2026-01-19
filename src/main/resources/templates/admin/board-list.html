@@ -4,27 +4,38 @@
       layout:decorate="~{layout}">
 
 <head>
-    <title>공지사항 목록</title>
+    <title>게시글 관리</title>
 </head>
 
-<th:block layout:fragment="content">
-        <h1 class="mb-4">공지사항</h1>
+    <th:block layout:fragment="content">
+        <h1 class="mb-4">게시글 관리</h1>
         <table class="table table-hover">
             <thead class="thead-dark">
                 <tr>
-                    <th>번호</th>
+                    <th>#</th>
                     <th>제목</th>
+                    <th>작성자</th>
+                    <th>게시판</th>
                     <th>작성일</th>
+                    <th>관리</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:if="${noticeList.isEmpty()}">
-                    <td colspan="3" class="text-center">등록된 공지사항이 없습니다.</td>
+                <tr th:if="${boardList.isEmpty()}">
+                    <td colspan="6" class="text-center">등록된 게시글이 없습니다.</td>
                 </tr>
-                <tr th:each="notice, stat : ${noticeList}">
+                <tr th:each="board, stat : ${boardList}">
                     <td th:text="${stat.count}"></td>
-                    <td><a th:href="@{/notice/{noticeId}(noticeId=${notice.noticeId})}" th:text="${notice.title}"></a></td>
-                    <td th:text="${notice.insertDate != null ? #temporals.format(notice.insertDate, 'yyyy-MM-dd HH:mm') : '날짜 없음'}"></td>
+                    <td>
+                        <a th:href="@{/board/{id}(id=${board.boardId})}" th:text="${board.title}"></a>
+                    </td>
+                    <td th:text="${board.writer}"></td>
+                    <td>자유게시판</td> <!-- DTO에 게시판 이름 필드가 없으므로 임시 처리 -->
+                    <td th:text="${#temporals.format(board.insertDate != null ? board.insertDate : null, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td>
+                        <button class="btn btn-sm btn-info">수정</button>
+                        <button class="btn btn-sm btn-danger">삭제</button>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -48,8 +59,8 @@
             </ul>
         </nav>
 
-        <div class="d-flex justify-content-end mt-3">
-            <a href="/notice/writePage" class="btn btn-primary">글쓰기</a>
+        <div class="d-flex justify-content-between">
+            <a href="/admin/dashboard" class="btn btn-secondary">대시보드로 돌아가기</a>
         </div>
     </th:block>
 </html>

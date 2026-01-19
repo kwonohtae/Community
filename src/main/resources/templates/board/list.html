@@ -7,44 +7,51 @@
     <title>게시판</title>
 </head>
 
-<body>
-    <th:block layout:fragment="content">
-        <h1 class="mt-5 mb-3">게시판</h1>
-        <table class="table table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th>번호</th>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- 예시 데이터 -->
-                <tr>
-                    <td>1</td>
-                    <td><a href="/board/1">첫 번째 게시글입니다.</a></td>
-                    <td>테스터</td>
-                    <td>2026-01-16</td>
-                </tr>
-                <!-- 게시글 루프 -->
-                <tr th:each="board, stat : ${boardList}">
-                    <td th:text="${stat.count}"></td>
-                    <!-- <td th:text="${board.boardId}"></td> -->
-                    <td><a th:href="@{/board/{boardId}(boardId=${board.boardId})}" th:text="${board.title}"></a></td>
-                    <td th:text="${board.writer}"></td>
-                    <td th:text="${#temporals.format(board.insertDate, 'yyyy-MM-dd')}"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="d-flex justify-content-end">
-            <a href="/board/writePage" class="btn btn-primary">글쓰기</a>
-        </div>
-    </th:block>
-</body>
+                <th:block layout:fragment="content">
+                <h1 class="mt-5 mb-3">게시판</h1>
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>번호</th>
+                            <th>제목</th>
+                            <th>작성자</th>
+                            <th>작성일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${boardList.isEmpty()}">
+                            <td colspan="4" class="text-center">등록된 게시글이 없습니다.</td>
+                        </tr>
+                        <tr th:each="board, stat : ${boardList}">
+                            <td th:text="${stat.count}"></td>
+                            <td><a th:href="@{/board/{boardId}(boardId=${board.boardId})}" th:text="${board.title}"></a></td>
+                            <td th:text="${board.writer}"></td>
+                            <td th:text="${#temporals.format(board.insertDate != null ? board.insertDate : null, 'yyyy-MM-dd HH:mm')}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+        
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{${#request.requestURI}(page=${currentPage - 1})}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
+                            <a class="page-link" th:href="@{${#request.requestURI}(page=${i})}" th:text="${i}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                            <a class="page-link" th:href="@{${#request.requestURI}(page=${currentPage + 1})}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+        
+                <div class="d-flex justify-content-end mt-3">
+                    <a href="/board/writePage" class="btn btn-primary">글쓰기</a>
+                </div>
+            </th:block>
 </html>
-<script>
-
-
-</script>

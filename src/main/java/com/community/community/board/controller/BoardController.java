@@ -23,11 +23,19 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/list")
-    public String boardList(Model model) {
-    	BoardRequestDto boardRequestDto = new BoardRequestDto(); 
+    public String boardList(@RequestParam(defaultValue = "1") int page, Model model) {
+    	BoardRequestDto boardRequestDto = new BoardRequestDto();
+    	boardRequestDto.setPage(page);
         List<BoardResponseDto> boardList = boardService.findAll(boardRequestDto);
+        int totalCount = boardService.getTotalCount(boardRequestDto);
+
+        int totalPages = (int) Math.ceil((double) totalCount / boardRequestDto.getPageSize());
+
         log.info("데이터 확인 :::: {}" , boardList.size());
         model.addAttribute("boardList", boardList);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", boardRequestDto.getPageSize());
         return "board/list";
     }
 

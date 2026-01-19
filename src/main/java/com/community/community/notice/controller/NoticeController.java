@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.community.community.notice.dto.NoticeRequestDto;
 import com.community.community.notice.dto.NoticeResponseDto;
@@ -26,12 +27,20 @@ public class NoticeController {
     private final NoticeService noticeService;
 	
     @GetMapping("/list")
-    public String noticeList(Model model) {
+    public String noticeList(@RequestParam(defaultValue = "1") int page, Model model) {
     	
-    	NoticeRequestDto noticeRequestDto = new NoticeRequestDto(); 
+    	NoticeRequestDto noticeRequestDto = new NoticeRequestDto();
+    	noticeRequestDto.setPage(page);
     	List<NoticeResponseDto> noticeList = noticeService.findAll(noticeRequestDto);
+    	int totalCount = noticeService.getTotalCount(noticeRequestDto);
+
+        int totalPages = (int) Math.ceil((double) totalCount / noticeRequestDto.getPageSize());
+
     	log.info("데이터 확인 ::::: {}" , noticeList.size());
     	model.addAttribute("noticeList", noticeList);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", noticeRequestDto.getPageSize());
         return "notice/list";
     }
 

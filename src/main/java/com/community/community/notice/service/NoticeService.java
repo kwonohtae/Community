@@ -8,4 +8,5 @@ import com.community.community.notice.dto.NoticeResponseDto;
 public interface NoticeService {
 
 	List<NoticeResponseDto> findAll(NoticeRequestDto noticeRequestDto);
+	int getTotalCount(NoticeRequestDto noticeRequestDto);
 }

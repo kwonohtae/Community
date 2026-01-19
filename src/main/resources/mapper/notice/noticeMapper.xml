@@ -2,22 +2,37 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-  <mapper namespace="com.community.community.notice.mapper.NoticeMapper">
+  
+<mapper namespace="com.community.community.notice.mapper.NoticeMapper">
   <select id = "findAll" parameterType="com.community.community.notice.dto.NoticeRequestDto" resultType="com.community.community.notice.dto.NoticeResponseDto">
   	SELECT
   		notice_id,
+  		community_id,
   		user_id,
   		title,
   		writer,
   		detail,
   		views,
+  		use_yn,
+  		insert_user,
   		insert_date,
+  		update_user,
   		update_date
-  	FROM NOTICE
+  	FROM notice
   	WHERE 1=1
   	<if test="title != '' and title != null">
   	AND title LIKE CONCAT('%', #{title}, '%')
   	</if>
+  	ORDER BY insert_date DESC
+  	LIMIT #{pageSize} OFFSET #{offset}
   </select>
-  
-  </mapper>
+
+  <select id="countAll" parameterType="com.community.community.notice.dto.NoticeRequestDto" resultType="int">
+      SELECT COUNT(*)
+      FROM notice
+      WHERE 1=1
+      <if test="title != '' and title != null">
+      AND title LIKE CONCAT('%', #{title}, '%')
+      </if>
+  </select>
+</mapper>

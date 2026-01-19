@@ -7,7 +7,6 @@
     <title>공지글 관리</title>
 </head>
 
-<body>
     <th:block layout:fragment="content">
         <h1 class="mb-4">공지글 관리</h1>
         <table class="table table-hover">
@@ -21,35 +20,45 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- 예시 데이터 -->
-                <tr>
-                    <td>1</td>
-                    <td>첫 번째 공지글입니다.</td>
-                    <td>관리자</td>
-                    <td>2026-01-16</td>
-                    <td>
-                        <button class="btn btn-sm btn-info">수정</button>
-                        <button class="btn btn-sm btn-danger">삭제</button>
-                    </td>
+                <tr th:if="${noticeList.isEmpty()}">
+                    <td colspan="5" class="text-center">등록된 공지사항이 없습니다.</td>
                 </tr>
-                <!-- 공지글 목록 루프 -->
-                <!--
                 <tr th:each="notice, stat : ${noticeList}">
                     <td th:text="${stat.count}"></td>
-                    <td th:text="${notice.title}"></td>
-                    <td th:text="${notice.author}"></td>
-                    <td th:text="${#temporals.format(notice.createdDate, 'yyyy-MM-dd')}"></td>
+                    <td>
+                        <a th:href="@{/notice/{id}(id=${notice.noticeId})}" th:text="${notice.title}"></a>
+                    </td>
+                    <td th:text="${notice.writer}"></td>
+                    <td th:text="${#temporals.format(notice.insertDate != null ? notice.insertDate : null, 'yyyy-MM-dd HH:mm')}"></td>
                     <td>
                         <button class="btn btn-sm btn-info">수정</button>
                         <button class="btn btn-sm btn-danger">삭제</button>
                     </td>
                 </tr>
-                -->
             </tbody>
         </table>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{${#request.requestURI}(page=${currentPage - 1})}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{${#request.requestURI}(page=${i})}" th:text="${i}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{${#request.requestURI}(page=${currentPage + 1})}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
         <div class="d-flex justify-content-between">
             <a href="/admin/dashboard" class="btn btn-secondary">대시보드로 돌아가기</a>
         </div>
     </th:block>
-</body>
 </html>

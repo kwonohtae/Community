@@ -18,6 +18,17 @@
   	<if test="title != '' and title != null">
   	AND title LIKE CONCAT('%', #{title}, '%')
   	</if>
+  	ORDER BY insert_date DESC
+  	LIMIT #{pageSize} OFFSET #{offset}
+  </select>
+
+  <select id="countAll" parameterType="com.community.community.board.dto.BoardRequestDto" resultType="int">
+      SELECT COUNT(*)
+      FROM BOARD
+      WHERE 1=1
+      <if test="title != '' and title != null">
+      AND title LIKE CONCAT('%', #{title}, '%')
+      </if>
   </select>
   
   </mapper>

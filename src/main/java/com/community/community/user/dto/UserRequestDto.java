@@ -1,11 +1,10 @@
-package com.community.community.notice.dto;
+package com.community.community.user.dto;
 
 import lombok.Data;
 
 @Data
-public class NoticeRequestDto {
-
-	private String title;
+public class UserRequestDto {
+    private String userId; // 검색 조건 등으로 활용될 수 있음
 
     // Paging fields
     private int page = 1; // Current page number, default to 1
