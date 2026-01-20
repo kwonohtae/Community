@@ -5,6 +5,8 @@ import com.community.community.board.dto.BoardResponseDto;
 import com.community.community.board.mapper.BoardMapper;
 import com.community.community.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +15,8 @@ import java.util.List;
 @Service
 public class BoardServiceImpl implements BoardService {
 
-    private final BoardMapper boardMapper;
+    @Autowired
+	private final BoardMapper boardMapper;
 
     @Override
     public List<BoardResponseDto> findAll(BoardRequestDto boardRequestDto) {
