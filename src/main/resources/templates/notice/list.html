@@ -23,7 +23,7 @@
                 </tr>
                 <tr th:each="notice, stat : ${noticeList}">
                     <td th:text="${stat.count}"></td>
-                    <td><a th:href="@{/notice/detail/{noticeId}(noticeId=${notice.noticeId})}" th:text="${notice.title}"></a></td>
+                    <td><a th:href="@{/notice/detail/{noticeId}?page={page}(noticeId=${notice.noticeId}, page=${currentPage})}" th:text="${notice.title}"></a></td>
                     <td th:text="${notice.insertDate != null ? #temporals.format(notice.insertDate, 'yyyy-MM-dd HH:mm') : '날짜 없음'}"></td>
                 </tr>
             </tbody>

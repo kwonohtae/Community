@@ -56,12 +56,13 @@ public class NoticeController {
     }
 
     @GetMapping("/detail/{noticeId}")
-    public String noticeDetail(@PathVariable Long noticeId, Model model) {
+    public String noticeDetail(@PathVariable Long noticeId, @RequestParam int page, Model model) {
     	log.info("noticeDetail 진입 데이터 확인 ::::  {}  ", noticeId);
     	NoticeResponseDto notice = new NoticeResponseDto();
     	notice = noticeService.findByNoticeId(noticeId);
     	if(notice != null || !notice.equals("")) {
     		model.addAttribute("notice", notice);
+    		model.addAttribute("page", page);
     		return "notice/detail";
     	}else {
     		return "error/500";
