@@ -3,6 +3,7 @@ package com.community.community.notice.controller;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.community.community.notice.dto.NoticeRequestDto;
 import com.community.community.notice.dto.NoticeResponseDto;
@@ -49,9 +51,12 @@ public class NoticeController {
         return "notice/write";
     }
     
+    @Transactional
     @PostMapping("/save")
-    public String saveBoard(@ModelAttribute NoticeRequestDto noticeRequestDto) {
+    public String saveBoard(@ModelAttribute NoticeRequestDto noticeRequestDto, @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments) {
         // noticeService.save(noticeRequestDto);
+    	log.info("saveBoard 진입 데이터 확인1 ::::: {}",noticeRequestDto);
+    	log.info("saveBoard 진입 데이터 확인2 ::::: {}",attachments);
         return "redirect:/notice/list";
     }
 

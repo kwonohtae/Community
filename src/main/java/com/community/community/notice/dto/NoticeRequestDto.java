@@ -6,6 +6,8 @@ import lombok.Data;
 public class NoticeRequestDto {
 
 	private String title;
+	private String detail;
+	private String writer;
 
     // Paging fields
     private int page = 1; // Current page number, default to 1

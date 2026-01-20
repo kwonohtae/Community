@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.community.community.board.dto.BoardRequestDto;
 import com.community.community.board.dto.BoardResponseDto;
@@ -49,8 +50,10 @@ public class BoardController {
     }
 
     @PostMapping("/save")
-    public String saveBoard(@ModelAttribute BoardRequestDto boardRequestDto) {
-        boardService.save(boardRequestDto);
+    public String saveBoard(@ModelAttribute BoardRequestDto boardRequestDto, @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments) {
+        // boardService.save(boardRequestDto);
+    	log.info("saveBoard 진입 데이터 확인1 ::::: {}", boardRequestDto);
+    	log.info("saveBoard 진입 데이터 확인2 ::::: {}", attachments);
         return "redirect:/board/list";
     }
 
