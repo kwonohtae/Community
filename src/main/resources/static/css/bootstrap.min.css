@@ -1,0 +1,12 @@
+/* Placeholder for Bootstrap CSS */
+body {
+    background-color: #f8f9fa; /* Light gray background to confirm CSS is working */
+    color: #333;
+}
+.navbar {
+    background-color: #e9ecef !important; /* Light background for navbar */
+}
+.container {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

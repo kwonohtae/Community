@@ -22,6 +22,25 @@
   	LIMIT #{pageSize} OFFSET #{offset}
   </select>
 
+  <select id="findById" parameterType="int" resultType="com.community.community.board.dto.BoardResponseDto">
+    SELECT
+        board_id,
+        user_id,
+        title,
+        writer,
+        detail,
+        views,
+        insert_date,
+        update_date
+    FROM BOARD
+    WHERE board_id = #{id}
+  </select>
+  
+  <insert id="save" parameterType="com.community.community.board.dto.BoardRequestDto">
+    INSERT INTO BOARD (title, writer, detail, insert_date)
+    VALUES (#{title}, #{writer}, #{detail}, NOW())
+  </insert>
+  
   <select id="countAll" parameterType="com.community.community.board.dto.BoardRequestDto" resultType="int">
       SELECT COUNT(*)
       FROM BOARD

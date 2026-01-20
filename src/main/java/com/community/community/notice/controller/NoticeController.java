@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/notice")
 public class NoticeController {
 	
-	@Autowired
     private final NoticeService noticeService;
 	
     @GetMapping("/list")
