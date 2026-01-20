@@ -23,30 +23,30 @@
                 </tr>
                 <tr th:each="notice, stat : ${noticeList}">
                     <td th:text="${stat.count}"></td>
-                    <td><a th:href="@{/notice/{noticeId}(noticeId=${notice.noticeId})}" th:text="${notice.title}"></a></td>
+                    <td><a th:href="@{/notice/detail/{noticeId}(noticeId=${notice.noticeId})}" th:text="${notice.title}"></a></td>
                     <td th:text="${notice.insertDate != null ? #temporals.format(notice.insertDate, 'yyyy-MM-dd HH:mm') : '날짜 없음'}"></td>
                 </tr>
             </tbody>
         </table>
 
         <!-- Pagination -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{''(page=${currentPage - 1})}" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                    <a class.page-link="page-link" th:href="@{''(page=${i})}" th:text="${i}"></a>
-                </li>
-                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                    <a class="page-link" th:href="@{''(page=${currentPage + 1})}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{''(page=${currentPage - 1})}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{''(page=${i})}" th:text="${i}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                        <a class="page-link" th:href="@{''(page=${currentPage + 1})}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
         <div class="d-flex justify-content-end mt-3">
             <a href="/notice/writePage" class="btn btn-primary">글쓰기</a>

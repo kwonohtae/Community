@@ -4,17 +4,7 @@
       layout:decorate="~{layout}">
 <head>
     <title>아이디/비밀번호 찾기</title>
-    <style>
-        .form-container {
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin: 5rem auto; /* 중앙 정렬 및 상단 여백 추가 */
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/corporate-style.css}">
 </head>
 <div layout:fragment="content">
     <div class="form-container">
@@ -22,10 +12,10 @@
 
         <ul class="nav nav-tabs" id="findTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="find-id-tab" data-toggle="tab" href="#find-id" role="tab" aria-controls="find-id" aria-selected="true">아이디 찾기</a>
+                <a class="nav-link active" id="find-id-tab" data-bs-toggle="tab" data-bs-target="#find-id" role="tab" aria-controls="find-id" aria-selected="true">아이디 찾기</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="find-pw-tab" data-toggle="tab" href="#find-pw" role="tab" aria-controls="find-pw" aria-selected="false">비밀번호 찾기</a>
+                <a class="nav-link" id="find-pw-tab" data-bs-toggle="tab" data-bs-target="#find-pw" role="tab" aria-controls="find-pw" aria-selected="false">비밀번호 찾기</a>
             </li>
         </ul>
 

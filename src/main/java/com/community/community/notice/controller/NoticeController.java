@@ -2,11 +2,12 @@ package com.community.community.notice.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -35,7 +36,7 @@ public class NoticeController {
 
         int totalPages = (int) Math.ceil((double) totalCount / noticeRequestDto.getPageSize());
 
-    	log.info("데이터 확인 ::::: {}" , noticeList.size());
+    	log.info("noticeList 진입 데이터 확인 ::::: {}" , noticeList.size());
     	model.addAttribute("noticeList", noticeList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
@@ -47,10 +48,23 @@ public class NoticeController {
     public String noticeWritePage() {
         return "notice/write";
     }
+    
+    @PostMapping("/save")
+    public String saveBoard(@ModelAttribute NoticeRequestDto noticeRequestDto) {
+        // noticeService.save(noticeRequestDto);
+        return "redirect:/notice/list";
+    }
 
-    @GetMapping("/{noticeId}")
-    public String noticeDetail(@PathVariable Long id, Model model) {
-        // model.addAttribute("notice", noticeService.findById(id));
-        return "notice/detail";
+    @GetMapping("/detail/{noticeId}")
+    public String noticeDetail(@PathVariable Long noticeId, Model model) {
+    	log.info("noticeDetail 진입 데이터 확인 ::::  {}  ", noticeId);
+    	NoticeResponseDto notice = new NoticeResponseDto();
+    	notice = noticeService.findByNoticeId(noticeId);
+    	if(notice != null || !notice.equals("")) {
+    		model.addAttribute("notice", notice);
+    		return "notice/detail";
+    	}else {
+    		return "error/500";
+    	}       
     }
 }

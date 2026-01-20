@@ -19,7 +19,7 @@
   		update_user,
   		update_date
   	FROM notice
-  	WHERE 1=1
+  	WHERE use_yn = "Y"
   	<if test="title != '' and title != null">
   	AND title LIKE CONCAT('%', #{title}, '%')
   	</if>
@@ -30,9 +30,28 @@
   <select id="countAll" parameterType="com.community.community.notice.dto.NoticeRequestDto" resultType="int">
       SELECT COUNT(*)
       FROM notice
-      WHERE 1=1
+      WHERE use_yn = "Y"
       <if test="title != '' and title != null">
       AND title LIKE CONCAT('%', #{title}, '%')
       </if>
+  </select>
+  
+  <select id="findByNoticeId" parameterType="Long" resultType="com.community.community.notice.dto.NoticeResponseDto">
+  	SELECT
+  		notice_id,
+  		community_id,
+  		user_id,
+  		title,
+  		writer,
+  		detail,
+  		views,
+  		use_yn,
+  		insert_user,
+  		insert_date,
+  		update_user,
+  		update_date
+  	FROM notice
+  	WHERE use_yn = "Y"
+  	AND notice_id = #{noticeId}
   </select>
 </mapper>

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BoardService {
     List<BoardResponseDto> findAll(BoardRequestDto boardRequestDto);
-    BoardResponseDto findById(int id);
+    BoardResponseDto findByBoardId(int boardId);
     void save(BoardRequestDto boardRequestDto);
     int getTotalCount(BoardRequestDto boardRequestDto);
 }

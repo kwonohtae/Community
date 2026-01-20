@@ -7,51 +7,75 @@
     <title>게시판</title>
 </head>
 
-                <th:block layout:fragment="content">
-                <h1 class="mt-5 mb-3">게시판</h1>
-                <table class="table table-hover">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>번호</th>
-                            <th>제목</th>
-                            <th>작성자</th>
-                            <th>작성일</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:if="${boardList.isEmpty()}">
-                            <td colspan="4" class="text-center">등록된 게시글이 없습니다.</td>
-                        </tr>
-                        <tr th:each="board, stat : ${boardList}">
-                            <td th:text="${stat.count}"></td>
-                            <td><a th:href="@{/board/{boardId}(boardId=${board.boardId})}" th:text="${board.title}"></a></td>
-                            <td th:text="${board.writer}"></td>
-                            <td th:text="${#temporals.format(board.insertDate != null ? board.insertDate : null, 'yyyy-MM-dd HH:mm')}"></td>
-                        </tr>
-                    </tbody>
-                </table>
-        
-                <!-- Pagination -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{''(page=${currentPage - 1})}" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                    <a class.page-link="page-link" th:href="@{''(page=${i})}" th:text="${i}"></a>
-                </li>
-                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                    <a class="page-link" th:href="@{''(page=${currentPage + 1})}" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        
-                <div class="d-flex justify-content-end mt-3">
-                    <a href="/board/writePage" class="btn btn-primary">글쓰기</a>
-                </div>
-            </th:block>
+<body>
+
+    <th:block layout:fragment="content">
+    
+        <div id="boardListContainer">
+            <h1 class="mt-5 mb-3">게시판</h1>
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>작성일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${boardList.isEmpty()}">
+                        <td colspan="4" class="text-center">등록된 게시글이 없습니다.</td>
+                    </tr>
+                    <tr th:each="board, stat : ${boardList}">
+                        <td th:text="${stat.count}"></td>
+                        <td><a th:href="@{/board/detail/{boardId}?page={page}(boardId=${board.boardId}, page=${currentPage})}" th:text="${board.title}" /></td>
+                        <td th:text="${board.writer}"></td>
+                        <td th:text="${#temporals.format(board.insertDate != null ? board.insertDate : null, 'yyyy-MM-dd HH:mm')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{''(page=${currentPage - 1})}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{''(page=${i})}" th:text="${i}"></a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                        <a class="page-link" th:href="@{''(page=${currentPage + 1})}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="d-flex justify-content-end mt-3">
+                <a href="/board/writePage" class="btn btn-primary">글쓰기</a>
+            </div>
+        </div>
+
+        <!-- 게시글 상세 내용 표시 영역 -->
+        <div id="boardDetailArea" class="mt-5" style="display: none;">
+            <!-- 상세 내용이 여기에 동적으로 로드됩니다 -->
+        </div>
+    </th:block>
+</body>
+
 </html>
+<script>
+    
+    // 상세 보기 함수
+    function boardDetail(boardId, page) {
+    	
+        // const detailUrl = `/board/detail/${boardId}?page=${page}`;
+        const data = {boardId : boardId, page:page}
+        console.log("!!!! " + JSON.stringify(data))
+        
+        
+    }
+</script>

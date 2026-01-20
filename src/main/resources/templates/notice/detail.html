@@ -14,10 +14,10 @@
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title" th:text="${notice.title}">공지사항 제목</h4>
-                <small class="text-muted" th:text="'작성자: ' + ${notice.author} + ' | 작성일: ' + ${#temporals.format(notice.createdDate, 'yyyy-MM-dd')}">작성자: 관리자 | 작성일: 2026-01-16</small>
+                <small class="text-muted" th:text="'작성자: ' + ${notice.writer} + ' | 작성일: ' + ${#temporals.format(notice.insertDate, 'yyyy-MM-dd')}">작성자: 관리자 | 작성일: 2026-01-16</small>
             </div>
             <div class="card-body">
-                <p class="card-text" th:text="${notice.content}">공지사항 내용이 여기에 표시됩니다.</p>
+                <p class="card-text" th:text="${notice.detail}">공지사항 내용이 여기에 표시됩니다.</p>
             </div>
         </div>
 

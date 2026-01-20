@@ -1,17 +1,22 @@
 package com.community.community.board.controller;
 
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.community.community.board.dto.BoardRequestDto;
 import com.community.community.board.dto.BoardResponseDto;
 import com.community.community.board.service.BoardService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,7 +35,7 @@ public class BoardController {
 
         int totalPages = (int) Math.ceil((double) totalCount / boardRequestDto.getPageSize());
 
-        log.info("데이터 확인 :::: {}" , boardList.size());
+        log.info("boardList 진입 데이터 확인 :::: {}" , boardList.size());
         model.addAttribute("boardList", boardList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
@@ -49,13 +54,19 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    @GetMapping("/{boardId}")
-    public String boardDetail(@PathVariable int boardId, Model model) {
-        
-    	log.info("진입 확인 ::: !! {}", boardId);
+    @GetMapping("/detail/{boardId}")
+    public String boardDetail(@PathVariable int boardId, @RequestParam int page, Model model) {
+    	log.info("boardDetail 진입 데이터 확인 ::: {} :::::: {} ", boardId , page);
     	
-    	BoardResponseDto board = boardService.findById(boardId);
-        model.addAttribute("board", board);
-        return "board/detail";
+    	BoardResponseDto board = boardService.findByBoardId(boardId);
+    	if(board != null || !board.equals("")) {
+    		model.addAttribute("board", board);
+    		model.addAttribute("page", page);
+    		return "board/detail";	
+    	}else {
+    		return "error/500";
+    	}
+        
+        
     }
 }

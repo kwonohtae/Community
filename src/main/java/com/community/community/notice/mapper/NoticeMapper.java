@@ -11,4 +11,5 @@ import com.community.community.notice.dto.NoticeResponseDto;
 public interface NoticeMapper {
 	List<NoticeResponseDto> findAll(NoticeRequestDto noticeRequestDto);
 	int countAll(NoticeRequestDto noticeRequestDto);
+	NoticeResponseDto findByNoticeId(Long noticeId);
 }

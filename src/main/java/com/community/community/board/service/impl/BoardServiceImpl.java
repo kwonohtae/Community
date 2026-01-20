@@ -24,8 +24,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardResponseDto findById(int id) {
-        return boardMapper.findById(id);
+    public BoardResponseDto findByBoardId(int boardId) {
+        return boardMapper.findByBoardId(boardId);
     }
 
     @Override

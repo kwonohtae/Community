@@ -1,0 +1,14 @@
+사용자님, `board/list.html`에서 `${board.title}` 클릭 시 `boardId`를 `boardDetail` 함수로 전달하고 `fetch API`를 사용해 상세 페이지로 이동하는 방법을 구현해 드리겠습니다.
+
+다만, "상세 페이지로 이동"이라는 표현에 대해 두 가지 방식으로 해석될 수 있어 사용자님의 정확한 의도를 확인하고자 합니다.
+
+1.  **Fetch 후 전체 페이지 리다이렉트 방식:**
+    *   `fetch` API로 `boardId`에 해당하는 상세 데이터를 먼저 가져옵니다.
+    *   데이터를 성공적으로 가져온 후, `window.location.href`를 사용하여 `/board/detail/{boardId}`와 같은 새로운 URL로 브라우저 전체를 새로고침하며 이동하는 방식입니다. (`fetch`는 이동 전에 데이터를 미리 가져오거나 특정 처리를 하는 용도)
+
+2.  **Fetch 후 SPA(Single Page Application)처럼 특정 영역만 업데이트 방식:**
+    *   `fetch` API로 상세 데이터를 가져옵니다.
+    *   페이지 전체는 새로고침하지 않고, 현재 페이지의 특정 영역(`div`)만 가져온 상세 데이터로 업데이트합니다.
+    *   `history.pushState`를 사용하여 브라우저의 URL만 `/board/detail/{boardId}`로 변경하여 SPA처럼 보이는 효과를 줍니다. (이전 AJAX 구현 시도 때와 유사한 방식입니다.)
+
+어떤 방식을 원하시는지 알려주시면, 그에 맞춰 `board/list.html` 파일을 수정해 드리겠습니다.

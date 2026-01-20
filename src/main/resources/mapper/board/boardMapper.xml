@@ -14,7 +14,7 @@
   		insert_date,
   		update_date
   	FROM BOARD
-  	WHERE 1=1
+  	WHERE use_yn = "Y"
   	<if test="title != '' and title != null">
   	AND title LIKE CONCAT('%', #{title}, '%')
   	</if>
@@ -22,7 +22,7 @@
   	LIMIT #{pageSize} OFFSET #{offset}
   </select>
 
-  <select id="findById" parameterType="int" resultType="com.community.community.board.dto.BoardResponseDto">
+  <select id="findByBoardId" parameterType="int" resultType="com.community.community.board.dto.BoardResponseDto">
     SELECT
         board_id,
         user_id,
@@ -33,7 +33,7 @@
         insert_date,
         update_date
     FROM BOARD
-    WHERE board_id = #{id}
+    WHERE board_id = #{boardId}
   </select>
   
   <insert id="save" parameterType="com.community.community.board.dto.BoardRequestDto">
@@ -44,7 +44,7 @@
   <select id="countAll" parameterType="com.community.community.board.dto.BoardRequestDto" resultType="int">
       SELECT COUNT(*)
       FROM BOARD
-      WHERE 1=1
+      WHERE use_yn = "Y"
       <if test="title != '' and title != null">
       AND title LIKE CONCAT('%', #{title}, '%')
       </if>
