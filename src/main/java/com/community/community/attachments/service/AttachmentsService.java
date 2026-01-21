@@ -1,5 +1,9 @@
 package com.community.community.attachments.service;
 
-public interface AttachmentsService {
+import com.community.community.attachments.dto.AttachmentsRequestDto;
 
+public interface AttachmentsService {
+	
+	int save(AttachmentsRequestDto attachentd);
+	
 }

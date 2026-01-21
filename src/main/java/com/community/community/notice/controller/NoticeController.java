@@ -29,10 +29,18 @@ public class NoticeController {
     private final NoticeService noticeService;
 	
     @GetMapping("/list")
-    public String noticeList(@RequestParam(defaultValue = "1") int page, Model model) {
+    public String noticeList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String keyword,
+            Model model) {
     	
     	NoticeRequestDto noticeRequestDto = new NoticeRequestDto();
     	noticeRequestDto.setPage(page);
+        noticeRequestDto.setStartDate(startDate);
+        noticeRequestDto.setEndDate(endDate);
+        noticeRequestDto.setKeyword(keyword);
     	List<NoticeResponseDto> noticeList = noticeService.findAll(noticeRequestDto);
     	int totalCount = noticeService.getTotalCount(noticeRequestDto);
 
@@ -43,6 +51,9 @@ public class NoticeController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("pageSize", noticeRequestDto.getPageSize());
+        model.addAttribute("startDate", startDate); // Add for Thymeleaf to retain search values
+        model.addAttribute("endDate", endDate);     // Add for Thymeleaf to retain search values
+        model.addAttribute("keyword", keyword);     // Add for Thymeleaf to retain search values
         return "notice/list";
     }
 
@@ -53,10 +64,17 @@ public class NoticeController {
     
     @Transactional
     @PostMapping("/save")
-    public String saveBoard(@ModelAttribute NoticeRequestDto noticeRequestDto, @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments) {
-        // noticeService.save(noticeRequestDto);
-    	log.info("saveBoard 진입 데이터 확인1 ::::: {}",noticeRequestDto);
-    	log.info("saveBoard 진입 데이터 확인2 ::::: {}",attachments);
+    public String saveNotice(@ModelAttribute NoticeRequestDto noticeRequestDto, @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments) {
+        
+    	log.info("saveNotice 진입 데이터 확인1 ::::: {}",noticeRequestDto);
+    	if(!attachments.get(0).isEmpty()) {
+    		log.info("saveNotice 진입 데이터 확인2 ::::: {}",attachments.get(0).getOriginalFilename());	
+    	}
+    	
+    	int noticeId = 0;
+    	noticeId = noticeService.save(noticeRequestDto);
+    	
+    	log.info("saveNotice 결과 데이터 확인 ::::: {}", noticeId);
         return "redirect:/notice/list";
     }
 

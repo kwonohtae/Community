@@ -15,8 +15,14 @@
   		update_date
   	FROM BOARD
   	WHERE use_yn = "Y"
-  	<if test="title != '' and title != null">
-  	AND title LIKE CONCAT('%', #{title}, '%')
+  	<if test="keyword != null and keyword != ''">
+  		AND (title LIKE CONCAT('%', #{keyword}, '%') OR detail LIKE CONCAT('%', #{keyword}, '%'))
+  	</if>
+  	<if test="startDate != null and startDate != ''">
+  		AND insert_date &gt;= #{startDate}
+  	</if>
+  	<if test="endDate != null and endDate != ''">
+  		AND insert_date &lt;= CONCAT(#{endDate}, ' 23:59:59')
   	</if>
   	ORDER BY insert_date DESC
   	LIMIT #{pageSize} OFFSET #{offset}
@@ -45,9 +51,15 @@
       SELECT COUNT(*)
       FROM BOARD
       WHERE use_yn = "Y"
-      <if test="title != '' and title != null">
-      AND title LIKE CONCAT('%', #{title}, '%')
-      </if>
+      <if test="keyword != null and keyword != ''">
+  		AND (title LIKE CONCAT('%', #{keyword}, '%') OR detail LIKE CONCAT('%', #{keyword}, '%'))
+  	</if>
+  	<if test="startDate != null and startDate != ''">
+  		AND insert_date &gt;= #{startDate}
+  	</if>
+  	<if test="endDate != null and endDate != ''">
+  		AND insert_date &lt;= CONCAT(#{endDate}, ' 23:59:59')
+  	</if>
   </select>
   
   </mapper>

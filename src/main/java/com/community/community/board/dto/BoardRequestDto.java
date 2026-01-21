@@ -11,6 +11,9 @@ public class BoardRequestDto {
     private String writer;
     private String detail;
     private LocalDateTime insertDate;
+    private String startDate; // Added for search condition
+    private String endDate;   // Added for search condition
+    private String keyword;   // Added for search condition
     
     // Paging fields
     private int page = 1; // Current page number, default to 1

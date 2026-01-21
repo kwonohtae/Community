@@ -5,9 +5,13 @@ import lombok.Data;
 @Data
 public class NoticeRequestDto {
 
+	private int noticeId;
 	private String title;
 	private String detail;
 	private String writer;
+    private String startDate; // Added for search condition
+    private String endDate;   // Added for search condition
+    private String keyword;   // Added for search condition
 
     // Paging fields
     private int page = 1; // Current page number, default to 1

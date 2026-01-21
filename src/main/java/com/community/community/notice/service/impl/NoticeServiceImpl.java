@@ -34,4 +34,14 @@ public class NoticeServiceImpl implements NoticeService {
     	return noticeMapper.findByNoticeId(noticeId);
     }
     
+    @Override
+    public int save(NoticeRequestDto noticeRequestDto) {
+    noticeRequestDto.setWriter("user01");
+    noticeMapper.save(noticeRequestDto);
+    
+    log.info("insert 후 값 확인 :::: {}", noticeRequestDto.getNoticeId());
+    
+    return noticeRequestDto.getNoticeId();
+    }
+    
 }

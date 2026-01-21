@@ -12,4 +12,5 @@ public interface NoticeMapper {
 	List<NoticeResponseDto> findAll(NoticeRequestDto noticeRequestDto);
 	int countAll(NoticeRequestDto noticeRequestDto);
 	NoticeResponseDto findByNoticeId(Long noticeId);
+	int save(NoticeRequestDto noticeRequestDto);
 }

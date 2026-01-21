@@ -5,6 +5,7 @@
   
 <mapper namespace="com.community.community.notice.mapper.NoticeMapper">
   <select id="findAll" parameterType="com.community.community.notice.dto.NoticeRequestDto" resultType="com.community.community.notice.dto.NoticeResponseDto">
+  	/* 전체 리스트 조회 */
   	SELECT
   		notice_id,
   		community_id,
@@ -20,23 +21,37 @@
   		update_date
   	FROM notice
   	WHERE use_yn = "Y"
-  	<if test="title != '' and title != null">
-  	AND title LIKE CONCAT('%', #{title}, '%')
+  	<if test="keyword != null and keyword != ''">
+  		AND (title LIKE CONCAT('%', #{keyword}, '%') OR detail LIKE CONCAT('%', #{keyword}, '%'))
+  	</if>
+  	<if test="startDate != null and startDate != ''">
+  		AND insert_date &gt;= #{startDate}
+  	</if>
+  	<if test="endDate != null and endDate != ''">
+  		AND insert_date &lt;= CONCAT(#{endDate}, ' 23:59:59')
   	</if>
   	ORDER BY insert_date DESC
   	LIMIT #{pageSize} OFFSET #{offset}
   </select>
 
   <select id="countAll" parameterType="com.community.community.notice.dto.NoticeRequestDto" resultType="int">
+      /* 조회된 리스트 수 확인 */
       SELECT COUNT(*)
       FROM notice
       WHERE use_yn = "Y"
-      <if test="title != '' and title != null">
-      AND title LIKE CONCAT('%', #{title}, '%')
-      </if>
+      <if test="keyword != null and keyword != ''">
+  		AND (title LIKE CONCAT('%', #{keyword}, '%') OR detail LIKE CONCAT('%', #{keyword}, '%'))
+  	</if>
+  	<if test="startDate != null and startDate != ''">
+  		AND insert_date &gt;= #{startDate}
+  	</if>
+  	<if test="endDate != null and endDate != ''">
+  		AND insert_date &lt;= CONCAT(#{endDate}, ' 23:59:59')
+  	</if>
   </select>
   
   <select id="findByNoticeId" parameterType="Long" resultType="com.community.community.notice.dto.NoticeResponseDto">
+  	/* 상세로 들어가기 윈한 Notice 조회 */
   	SELECT
   		notice_id,
   		community_id,
@@ -54,4 +69,35 @@
   	WHERE use_yn = "Y"
   	AND notice_id = #{noticeId}
   </select>
+  
+  <insert id="save" useGeneratedKeys="true"	keyProperty="noticeId">
+  	/* Notice 신규 등록 */
+  	insert into notice 
+  	(
+  		community_id,
+  		user_id,
+  		title,
+  		writer,
+  		detail,
+  		use_yn,
+  		views,
+  		insert_user,
+  		insert_date
+  	) 
+  	values
+  	(
+  		2,
+  		#{writer},
+  		#{title},
+  		#{writer},
+  		#{detail},
+  		'Y',
+  		0,
+  		#{writer},
+  		now()
+  	)
+  </insert>
+  
+  
+  
 </mapper>

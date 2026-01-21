@@ -19,6 +19,14 @@
             <div class="card-body">
                 <p class="card-text" th:text="${notice.detail}">공지사항 내용이 여기에 표시됩니다.</p>
             </div>
+            <div class="card-footer" th:if="${attachments != null and not #lists.isEmpty(attachments)}">
+                <h5>첨부파일</h5>
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="attachment : ${attachments}">
+                        <a th:href="@{/attachments/download/{id}(id=${attachment.id})}" th:text="${attachment.originalName}"></a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div class="mt-4">

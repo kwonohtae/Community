@@ -3,6 +3,7 @@ package com.community.community.board.controller;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,19 +29,30 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/list")
-    public String boardList(@RequestParam(defaultValue = "1") int page, Model model) {
+    public String boardList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String keyword,
+            Model model) {
     	BoardRequestDto boardRequestDto = new BoardRequestDto();
     	boardRequestDto.setPage(page);
+        boardRequestDto.setStartDate(startDate);
+        boardRequestDto.setEndDate(endDate);
+        boardRequestDto.setKeyword(keyword);
         List<BoardResponseDto> boardList = boardService.findAll(boardRequestDto);
         int totalCount = boardService.getTotalCount(boardRequestDto);
 
         int totalPages = (int) Math.ceil((double) totalCount / boardRequestDto.getPageSize());
 
-        log.info("boardList 진입 데이터 확인 :::: {}" , boardList.size());
+        log.info("boardList 진입 데이터 확인 ::::: {}" , boardList.size());
         model.addAttribute("boardList", boardList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("pageSize", boardRequestDto.getPageSize());
+        model.addAttribute("startDate", startDate); // Add for Thymeleaf to retain search values
+        model.addAttribute("endDate", endDate);     // Add for Thymeleaf to retain search values
+        model.addAttribute("keyword", keyword);     // Add for Thymeleaf to retain search values
         return "board/list";
     }
 
@@ -49,6 +61,7 @@ public class BoardController {
         return "board/write";
     }
 
+    @Transactional
     @PostMapping("/save")
     public String saveBoard(@ModelAttribute BoardRequestDto boardRequestDto, @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments) {
         // boardService.save(boardRequestDto);
