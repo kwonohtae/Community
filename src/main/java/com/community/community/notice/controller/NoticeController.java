@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.community.community.attachments.service.AttachmentsService;
 import com.community.community.notice.dto.NoticeRequestDto;
 import com.community.community.notice.dto.NoticeResponseDto;
 import com.community.community.notice.service.NoticeService;
@@ -46,7 +47,7 @@ public class NoticeController {
 
         int totalPages = (int) Math.ceil((double) totalCount / noticeRequestDto.getPageSize());
 
-    	log.info("noticeList 진입 데이터 확인 ::::: {}" , noticeList.size());
+    	log.info("noticeList 진입 데이터 확인 ::::: {}" , noticeRequestDto);
     	model.addAttribute("noticeList", noticeList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
@@ -62,19 +63,17 @@ public class NoticeController {
         return "notice/write";
     }
     
-    @Transactional
     @PostMapping("/save")
     public String saveNotice(@ModelAttribute NoticeRequestDto noticeRequestDto, @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments) {
-        
     	log.info("saveNotice 진입 데이터 확인1 ::::: {}",noticeRequestDto);
-    	if(!attachments.get(0).isEmpty()) {
-    		log.info("saveNotice 진입 데이터 확인2 ::::: {}",attachments.get(0).getOriginalFilename());	
-    	}
-    	
-    	int noticeId = 0;
-    	noticeId = noticeService.save(noticeRequestDto);
-    	
+    	int noticeId = noticeService.save(noticeRequestDto, attachments);
     	log.info("saveNotice 결과 데이터 확인 ::::: {}", noticeId);
+    	
+//    	if(!attachments.get(0).isEmpty()) {
+//    		log.info("saveNotice 진입 데이터 확인2 ::::: {}",attachments.get(0).getOriginalFilename());
+//    		
+//    		attachmentsService.saveFiles(attachments, "notice", noticeId, noticeRequestDto.getWriter());
+//    	}
         return "redirect:/notice/list";
     }
 
@@ -82,6 +81,7 @@ public class NoticeController {
     public String noticeDetail(@PathVariable Long noticeId, @RequestParam int page, Model model) {
     	log.info("noticeDetail 진입 데이터 확인 ::::  {}  ", noticeId);
     	NoticeResponseDto notice = new NoticeResponseDto();
+    	noticeService.updateView(noticeId);
     	notice = noticeService.findByNoticeId(noticeId);
     	if(notice != null || !notice.equals("")) {
     		model.addAttribute("notice", notice);

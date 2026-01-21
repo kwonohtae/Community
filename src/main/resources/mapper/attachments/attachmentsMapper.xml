@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.community.community.attachments.mapper.AttachmentsMapper">
+	<insert id="save" parameterType="com.community.community.attachments.dto.AttachmentsRequestDto">
+		INSERT INTO attachment (
+			<if test="noticeId != null || noticeId != ''">
+			notice_id,
+			</if>
+			<if test="boardId != null || boardId != ''">
+			board_id,
+			</if>
+			file_name,
+			file_path,
+			file_size,
+			use_yn,
+			insert_user,
+			insert_date
+		) VALUES (
+			<if test="noticeId != null || noticeId != ''">
+			#{noticeId},
+			</if>
+			<if test="boardId != null || boardId != ''">
+			#{boardId},
+			</if>
+			#{fileName},
+			#{filePath},
+			#{fileSize},
+			'Y',
+			#{insertUser},
+			NOW()
+		)
+	</insert>
+</mapper>

@@ -7,10 +7,10 @@ import lombok.Data;
 @Data
 public class BoardRequestDto {
     
+	private int boardId;
 	private String title;
     private String writer;
     private String detail;
-    private LocalDateTime insertDate;
     private String startDate; // Added for search condition
     private String endDate;   // Added for search condition
     private String keyword;   // Added for search condition

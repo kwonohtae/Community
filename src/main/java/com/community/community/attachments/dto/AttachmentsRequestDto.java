@@ -5,8 +5,12 @@ import lombok.Data;
 @Data
 public class AttachmentsRequestDto {
 	
+	private Long noticeId;
+	private Long boardId;
 	private String fileName;
 	private String filePath;
-	private String fileSize;
+	private long fileSize;
+	private String useYn = "Y";
+	private String insertUser;
 	
 }

@@ -13,4 +13,5 @@ public interface NoticeMapper {
 	int countAll(NoticeRequestDto noticeRequestDto);
 	NoticeResponseDto findByNoticeId(Long noticeId);
 	int save(NoticeRequestDto noticeRequestDto);
+	int updateView(Long noticeId);
 }

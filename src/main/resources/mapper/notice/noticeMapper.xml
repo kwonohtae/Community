@@ -98,6 +98,11 @@
   	)
   </insert>
   
+  <update id="updateView" parameterType="Long">
+  	update notice
+  	set views = views + 1
+  	where notice_id = #{noticeId}
+  </update>
   
   
 </mapper>

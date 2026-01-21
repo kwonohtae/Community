@@ -10,6 +10,7 @@ import java.util.List;
 public interface BoardMapper {
     List<BoardResponseDto> findAll(BoardRequestDto boardRequestDto);
     BoardResponseDto findByBoardId(int boardId);
-    void save(BoardRequestDto boardRequestDto);
+    int save(BoardRequestDto boardRequestDto);
     int countAll(BoardRequestDto boardRequestDto);
+    int updateView(int boardId);
 }

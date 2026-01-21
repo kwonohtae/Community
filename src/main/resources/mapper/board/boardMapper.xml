@@ -42,9 +42,31 @@
     WHERE board_id = #{boardId}
   </select>
   
-  <insert id="save" parameterType="com.community.community.board.dto.BoardRequestDto">
-    INSERT INTO BOARD (title, writer, detail, insert_date)
-    VALUES (#{title}, #{writer}, #{detail}, NOW())
+  <insert id="save" useGeneratedKeys="true"	keyProperty="boardId">
+    INSERT INTO BOARD 
+    (
+    	community_id,
+    	user_id,
+    	title, 
+    	writer, 
+    	detail, 
+    	use_yn,
+    	views,
+    	insert_user,
+    	insert_date
+    )
+    VALUES 
+    (
+    	1,
+    	#{writer},
+    	#{title}, 
+    	#{writer}, 
+    	#{detail}, 
+    	'Y',
+    	0,
+    	#{writer},
+    	NOW()
+    )
   </insert>
   
   <select id="countAll" parameterType="com.community.community.board.dto.BoardRequestDto" resultType="int">
@@ -61,5 +83,11 @@
   		AND insert_date &lt;= CONCAT(#{endDate}, ' 23:59:59')
   	</if>
   </select>
+  
+  <update id="updateView" parameterType="int">
+  	update board
+  	set views = views + 1
+  	where board_id = #{boardId}
+  </update>
   
   </mapper>

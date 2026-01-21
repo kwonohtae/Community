@@ -3,7 +3,6 @@ package com.community.community.board.controller;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class BoardController {
 
     private final BoardService boardService;
+    
 
     @GetMapping("/list")
     public String boardList(
@@ -45,7 +45,7 @@ public class BoardController {
 
         int totalPages = (int) Math.ceil((double) totalCount / boardRequestDto.getPageSize());
 
-        log.info("boardList 진입 데이터 확인 ::::: {}" , boardList.size());
+        log.info("boardList 진입 데이터 확인 ::::: {}" , boardRequestDto);
         model.addAttribute("boardList", boardList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
@@ -61,20 +61,21 @@ public class BoardController {
         return "board/write";
     }
 
-    @Transactional
     @PostMapping("/save")
     public String saveBoard(@ModelAttribute BoardRequestDto boardRequestDto, @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments) {
-        // boardService.save(boardRequestDto);
     	log.info("saveBoard 진입 데이터 확인1 ::::: {}", boardRequestDto);
-    	log.info("saveBoard 진입 데이터 확인2 ::::: {}", attachments);
+    	// attachmentsService.saveFiles 호출은 BoardServiceImpl로 이동
+    	int boardId = boardService.save(boardRequestDto, attachments); 
+    	log.info("saveBoard 결과 데이터 확인 ::::: {}", boardId);
         return "redirect:/board/list";
     }
 
     @GetMapping("/detail/{boardId}")
     public String boardDetail(@PathVariable int boardId, @RequestParam int page, Model model) {
     	log.info("boardDetail 진입 데이터 확인 ::: {} :::::: {} ", boardId , page);
-    	
-    	BoardResponseDto board = boardService.findByBoardId(boardId);
+    	BoardResponseDto board = new BoardResponseDto();  
+    	boardService.updateView(boardId);
+    	board = boardService.findByBoardId(boardId);
     	if(board != null || !board.equals("")) {
     		model.addAttribute("board", board);
     		model.addAttribute("page", page);
@@ -82,7 +83,5 @@ public class BoardController {
     	}else {
     		return "error/500";
     	}
-        
-        
     }
 }
