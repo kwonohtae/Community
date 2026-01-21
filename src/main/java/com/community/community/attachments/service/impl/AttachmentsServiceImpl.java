@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.community.community.attachments.dto.AttachmentsRequestDto;
+import com.community.community.attachments.dto.AttachmentsResponseDto; // 단일 import 유지
 import com.community.community.attachments.mapper.AttachmentsMapper;
 import com.community.community.attachments.service.AttachmentsService;
 
@@ -29,15 +30,17 @@ public class AttachmentsServiceImpl implements AttachmentsService{
     @Value("${file.upload-dir}")
     private String uploadPath;
 
+	// saveAttachment 메소드 제거됨
+	
 	@Override
 	@Transactional
-	public void saveFiles(List<MultipartFile> attachments, String type, Long refId, String writer) {
+	public void saveFiles(List<MultipartFile> attachments, String boardType, Long refId, String writer) { // writer 파라미터 추가
 		
         if (attachments.isEmpty()) {
             return;
         }
 
-        String path = type + File.separator + LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
+        String path = boardType + File.separator + LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
         File dir = new File(uploadPath + File.separator + path);
         
         if (dir.exists() == false) {
@@ -63,26 +66,32 @@ public class AttachmentsServiceImpl implements AttachmentsService{
                 attachment.transferTo(target);
 
                 AttachmentsRequestDto fileDto = new AttachmentsRequestDto();
-                if("notice".equals(type)) {
+                if("notice".equals(boardType)) {
                 	fileDto.setNoticeId(refId);
-                } else if("board".equals(type)) {
+                } else if("board".equals(boardType)) {
                 	fileDto.setBoardId(refId);
                 }
                 fileDto.setFileName(originalName);
                 fileDto.setFilePath(path + File.separator + savedName);
                 fileDto.setFileSize(fileSize);
-                //  TODO: insertUser는 현재 세션 등에서 가져와야 함. 우선은 "system"으로 하드코딩.
-//                fileDto.setInsertUser("system"); 
-                fileDto.setInsertUser(writer); 
+                fileDto.setInsertUser(writer); // writer 파라미터 사용
                 
                 attachmentsMapper.save(fileDto);
 
             } catch (IOException e) {
                 log.error("file save error", e);
-                // Consider how to handle partially successful uploads
-                // 하나의 파일이라도 실패하면 전체 롤백을 위해 런타임 예외 발생
                 throw new RuntimeException("File saving failed.", e);
             }
         }
+	}
+
+	@Override
+	public List<AttachmentsResponseDto> getAttachments(Long refId, String boardType) {
+		return attachmentsMapper.findByRefIdAndType(refId, boardType);
+	}
+	
+	@Override
+	public AttachmentsResponseDto getAttachmentById(Long attachmentId) {
+		return attachmentsMapper.findById(attachmentId);
 	}
 }

@@ -33,4 +33,39 @@
 			NOW()
 		)
 	</insert>
+	
+	<select id="findByRefIdAndType" resultType="com.community.community.attachments.dto.AttachmentsResponseDto">
+		SELECT
+			attachment_id AS attachmentId,
+			notice_id AS noticeId,
+			board_id AS boardId,
+			file_name AS fileName,
+			file_path AS filePath,
+			file_size AS fileSize
+		FROM
+			attachment
+		WHERE
+			use_yn = 'Y'
+			<if test="boardType == 'notice'">
+			AND notice_id = #{refId}
+			</if>
+			<if test="boardType == 'board'">
+			AND board_id = #{refId}
+			</if>
+	</select>
+	
+	<select id="findById" resultType="com.community.community.attachments.dto.AttachmentsResponseDto">
+		SELECT
+			attachment_id AS attachmentId,
+			notice_id AS noticeId,
+			board_id AS boardId,
+			file_name AS fileName,
+			file_path AS filePath,
+			file_size AS fileSize
+		FROM
+			attachment
+		WHERE
+			attachment_id = #{attachmentId}
+			AND use_yn = 'Y'
+	</select>
 </mapper>

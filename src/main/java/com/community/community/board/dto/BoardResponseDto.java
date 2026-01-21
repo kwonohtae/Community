@@ -1,6 +1,8 @@
 package com.community.community.board.dto;
 
 import java.time.LocalDateTime;
+import java.util.List; // Add this import
+import com.community.community.attachments.dto.AttachmentsResponseDto; // Add this import
 import lombok.Data;
 
 @Data
@@ -19,5 +21,6 @@ public class BoardResponseDto {
     private LocalDateTime insertDate;
     private String updateUser;
     private LocalDateTime updateDate;
+    private List<AttachmentsResponseDto> attachments; // Add this field
 
 }

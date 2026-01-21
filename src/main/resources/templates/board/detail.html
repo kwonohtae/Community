@@ -19,11 +19,11 @@
             <div class="card-body">
                 <p class="card-text" th:text="${board.detail}">게시글 내용이 여기에 표시됩니다.</p>
             </div>
-            <div class="card-footer" th:if="${attachments != null and not #lists.isEmpty(attachments)}">
+            <div class="card-footer" th:if="${board.attachments != null and not #lists.isEmpty(board.attachments)}">
                 <h5>첨부파일</h5>
                 <ul class="list-group">
-                    <li class="list-group-item" th:each="attachment : ${attachments}">
-                        <a th:href="@{/attachments/download/{id}(id=${attachment.id})}" th:text="${attachment.originalName}"></a>
+                    <li class="list-group-item" th:each="attachment : ${board.attachments}">
+                        <a th:href="@{/attachments/download/{attachmentId}(attachmentId=${attachment.attachmentId})}" th:text="${attachment.fileName}"></a>
                     </li>
                 </ul>
             </div>

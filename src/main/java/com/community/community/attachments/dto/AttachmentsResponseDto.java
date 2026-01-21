@@ -5,11 +5,12 @@ import lombok.Data;
 @Data
 public class AttachmentsResponseDto {
 
-	private int attchment;
-	private int noticeId;
-	private int boardId;
+	private Long attachmentId;
+	private Long noticeId;
+	private Long boardId;
 	private String fileName;
 	private String filePath;
 	private String fileSize;
                                                                            
 }
+

@@ -35,7 +35,14 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public NoticeResponseDto findByNoticeId(Long noticeId) {
     	log.info("데이터 확인 :::: {}", noticeId);
-    	return noticeMapper.findByNoticeId(noticeId);
+    	NoticeResponseDto notice = noticeMapper.findByNoticeId(noticeId);
+        if (notice != null) {
+            // 첨부파일 조회 및 설정
+            List<com.community.community.attachments.dto.AttachmentsResponseDto> attachments = 
+                attachmentsService.getAttachments(noticeId, "notice");
+            notice.setAttachments(attachments);
+        }
+    	return notice;
     }
     
     @Override

@@ -3,7 +3,6 @@ package com.community.community.notice.controller;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.community.community.attachments.service.AttachmentsService;
 import com.community.community.notice.dto.NoticeRequestDto;
 import com.community.community.notice.dto.NoticeResponseDto;
 import com.community.community.notice.service.NoticeService;

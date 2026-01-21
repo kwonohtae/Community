@@ -27,7 +27,14 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardResponseDto findByBoardId(int boardId) {
-        return boardMapper.findByBoardId(boardId);
+        BoardResponseDto board = boardMapper.findByBoardId(boardId);
+        if (board != null) {
+            // 첨부파일 조회 및 설정
+            List<com.community.community.attachments.dto.AttachmentsResponseDto> attachments = 
+                attachmentsService.getAttachments((long) boardId, "board");
+            board.setAttachments(attachments);
+        }
+        return board;
     }
 
     @Override
