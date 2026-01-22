@@ -7,7 +7,9 @@ import lombok.Data;
 @Data
 public class BoardRequestDto {
     
-	private int boardId;
+	private Long boardId; // int -> Long 변경
+    private Long parentId; // 추가
+    private String userId;
 	private String title;
     private String writer;
     private String detail;

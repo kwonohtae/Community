@@ -9,8 +9,9 @@ import java.util.List;
 @Mapper
 public interface BoardMapper {
     List<BoardResponseDto> findAll(BoardRequestDto boardRequestDto);
-    BoardResponseDto findByBoardId(int boardId);
+    BoardResponseDto findByBoardId(Long boardId); // int -> Long 변경
     int save(BoardRequestDto boardRequestDto);
     int countAll(BoardRequestDto boardRequestDto);
-    int updateView(int boardId);
+    int updateView(Long boardId); // int -> Long 변경
+    List<BoardResponseDto> findRepliesByParentId(Long parentId);
 }

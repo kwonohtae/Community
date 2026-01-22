@@ -29,6 +29,38 @@
             </div>
         </div>
 
+        <!-- 댓글 섹션 -->
+        <div class="mt-5">
+            <h3>댓글</h3>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form id="commentForm">
+                        <div class="mb-3">
+                            <textarea class="form-control" id="commentContent" rows="3" placeholder="댓글을 입력하세요" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">댓글 작성</button>
+                    </form>
+                </div>
+            </div>
+            <div id="commentsList" class="list-group">
+                <!-- 댓글 목록이 여기에 동적으로 추가될 예정입니다. -->
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">작성자1</h5>
+                        <small>2026-01-22</small>
+                    </div>
+                    <p class="mb-1">이것은 첫 번째 댓글입니다.</p>
+                </div>
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">작성자2</h5>
+                        <small>2026-01-22</small>
+                    </div>
+                    <p class="mb-1">이것은 두 번째 댓글입니다.</p>
+                </div>
+            </div>
+        </div>
+
         <div class="mt-4">
             <a th:href="@{/notice/list?page={page}(page=${page})}" class="btn btn-primary">목록으로</a>
             <!-- 작성자 또는 관리자만 보이도록 처리 필요 -->
@@ -38,3 +70,179 @@
     </th:block>
 </body>
 </html>
+    <script >
+        const noticeId = `[[${notice.noticeId}]]`;
+        const loggedInUserId = `[[${session.userId}]]` || 'Test'; // 로그인한 사용자 ID, 없으면 빈 문자열
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadComments(noticeId);
+
+            document.getElementById('commentForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                addComment(noticeId);
+            });
+        });
+
+        async function loadComments(noticeId) {
+            try {
+                const response = await fetch(`/comments/notice/${noticeId}`); // API 경로 변경
+                if (!response.ok) {
+                    throw new Error('댓글을 불러오는데 실패했습니다.');
+                }
+                const comments = await response.json();
+                renderComments(comments);
+            } catch (error) {
+                console.error('Error loading comments:', error);
+                showAlert('댓글을 불러오는데 실패했습니다.', 'danger');
+            }
+        }
+
+        function renderComments(comments) {
+            const commentsList = document.getElementById('commentsList');
+            commentsList.innerHTML = ''; // 기존 댓글 삭제
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<div class="list-group-item text-center text-muted">등록된 댓글이 없습니다.</div>';
+                return;
+            }
+
+            comments.forEach(comment => {
+                commentsList.appendChild(createCommentElement(comment));
+            });
+        }
+
+        function createCommentElement(comment) {
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'list-group-item';
+            commentDiv.id = `comment-${comment.commentId}`;
+
+            const isAuthor = loggedInUserId === comment.userId;
+
+            commentDiv.innerHTML = `
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h5 class="mb-1">${comment.userId}</h5>
+                    <small>${new Date(comment.insertDate).toLocaleString()}</small>
+                </div>
+                <p class="mb-1" id="commentContent-${comment.commentId}">${comment.comment}</p>
+                <div class="comment-actions mt-2" style="text-align: right;">
+                    ${isAuthor ? `
+                        <button type="button" class="btn btn-sm btn-outline-secondary me-2" onclick="toggleEditForm(${comment.commentId}, '${comment.comment}')">수정</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteComment(${comment.commentId})">삭제</button>
+                    ` : ''}
+                </div>
+                <div class="edit-form-container mt-2" id="editFormContainer-${comment.commentId}" style="display: none;">
+                    <textarea class="form-control mb-2" id="editContent-${comment.commentId}" rows="2">${comment.comment}</textarea>
+                    <button type="button" class="btn btn-sm btn-primary me-2" onclick="updateComment(${comment.commentId})">저장</button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="toggleEditForm(${comment.commentId})">취소</button>
+                </div>
+            `;
+            return commentDiv;
+        }
+
+        async function addComment(noticeId) {
+            const commentContentInput = document.getElementById('commentContent');
+            const comment = commentContentInput.value.trim();
+
+            if (!comment) {
+                showAlert('댓글 내용을 입력해주세요.', 'warning');
+                return;
+            }
+            if (!loggedInUserId) {
+                showAlert('로그인이 필요합니다.', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch('/comments/insert', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ noticeId: noticeId, comment: comment }) // noticeId 사용
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || '댓글 등록에 실패했습니다.');
+                }
+
+                showAlert('댓글이 성공적으로 등록되었습니다.', 'success');
+                commentContentInput.value = '';
+                loadComments(noticeId); // 댓글 목록 새로고침
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                showAlert(error.message || '댓글 등록 중 오류가 발생했습니다.', 'danger');
+            }
+        }
+        
+        function toggleEditForm(commentId, currentContent) {
+            const editFormContainer = document.getElementById(`editFormContainer-${commentId}`);
+            const commentContentElement = document.getElementById(`commentContent-${commentId}`);
+
+            if (editFormContainer.style.display === 'none') {
+                editFormContainer.style.display = 'block';
+                commentContentElement.style.display = 'none'; // 원본 댓글 내용 숨기기
+                document.getElementById(`editContent-${commentId}`).value = currentContent; // 현재 내용으로 폼 채우기
+            } else {
+                editFormContainer.style.display = 'none';
+                commentContentElement.style.display = 'block'; // 원본 댓글 내용 다시 보이기
+            }
+        }
+
+        async function updateComment(commentId) {
+            const editContentInput = document.getElementById(`editContent-${commentId}`);
+            const content = editContentInput.value.trim();
+
+            if (!content) {
+                showAlert('수정할 댓글 내용을 입력해주세요.', 'warning');
+                return;
+            }
+            if (!loggedInUserId) {
+                showAlert('로그인이 필요합니다.', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/comments/update/${commentId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: content })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || '댓글 수정에 실패했습니다.');
+                }
+
+                showAlert('댓글이 성공적으로 수정되었습니다.', 'success');
+                loadComments(noticeId); // 댓글 목록 새로고침
+            } catch (error) {
+                console.error('Error updating comment:', error);
+                showAlert(error.message || '댓글 수정 중 오류가 발생했습니다.', 'danger');
+            }
+        }
+
+        async function deleteComment(commentId) {
+            if (!loggedInUserId) {
+                showAlert('로그인이 필요합니다.', 'warning');
+                return;
+            }
+            
+            showConfirm('댓글을 삭제하시겠습니까?', async () => {
+                try {
+                    const response = await fetch(`/comments/delete/${commentId}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(errorText || '댓글 삭제에 실패했습니다.');
+                    }
+
+                    showAlert('댓글이 성공적으로 삭제되었습니다.', 'success');
+                    loadComments(noticeId); // 댓글 목록 새로고침
+                } catch (error) {
+                    console.error('Error deleting comment:', error);
+                    showAlert(error.message || '댓글 삭제 중 오류가 발생했습니다.', 'danger');
+                }
+            });
+        }
+    </script>

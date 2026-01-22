@@ -9,6 +9,26 @@
     <link rel="stylesheet" th:href="@{/css/corporate-style.css}">
 </head>
 <body>
+    <div id="alert-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalLabel">확인</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="confirmModalBody">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 4rem;">취소</button>
+            <button type="button" class="btn btn-primary" id="confirmModalConfirmButton" style="width: 4rem;">확인</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
         <a class="navbar-brand" href="/">Community</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,5 +54,45 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alert-container');
+            const wrapper = document.createElement('div');
+            const alertId = 'alert-' + Date.now(); // Unique ID for each alert
+            wrapper.innerHTML = [
+                `<div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">`,
+                `   <div>${message}</div>`,
+                '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                '</div>'
+            ].join('');
+
+            alertContainer.append(wrapper);
+
+            // Automatically close the alert after 5 seconds
+            const alertElement = document.getElementById(alertId);
+            const bsAlert = new bootstrap.Alert(alertElement);
+            setTimeout(() => {
+                bsAlert.close();
+            }, 5000);
+        }
+
+        function showConfirm(message, callback) {
+            const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            const confirmModalBody = document.getElementById('confirmModalBody');
+            const confirmModalConfirmButton = document.getElementById('confirmModalConfirmButton');
+
+            confirmModalBody.textContent = message;
+
+            const confirmHandler = () => {
+                callback();
+                confirmModal.hide();
+                confirmModalConfirmButton.removeEventListener('click', confirmHandler);
+            };
+
+            confirmModalConfirmButton.addEventListener('click', confirmHandler);
+
+            confirmModal.show();
+        }
+    </script>
 </body>
 </html>

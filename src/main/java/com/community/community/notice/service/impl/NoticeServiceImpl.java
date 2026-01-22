@@ -4,6 +4,7 @@ import com.community.community.notice.dto.NoticeRequestDto;
 import com.community.community.notice.dto.NoticeResponseDto;
 import com.community.community.notice.mapper.NoticeMapper;
 import com.community.community.notice.service.NoticeService;
+import com.community.community.attachments.dto.AttachmentsResponseDto;
 import com.community.community.attachments.service.AttachmentsService; // AttachmentsService import
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,7 @@ public class NoticeServiceImpl implements NoticeService {
     	NoticeResponseDto notice = noticeMapper.findByNoticeId(noticeId);
         if (notice != null) {
             // 첨부파일 조회 및 설정
-            List<com.community.community.attachments.dto.AttachmentsResponseDto> attachments = 
+            List<AttachmentsResponseDto> attachments = 
                 attachmentsService.getAttachments(noticeId, "notice");
             notice.setAttachments(attachments);
         }

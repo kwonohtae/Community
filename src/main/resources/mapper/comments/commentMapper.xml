@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.community.community.comments.mapper.CommentMapper">
+
+    <insert id="insertComment" parameterType="com.community.community.comments.dto.CommentRequestDto">
+        INSERT INTO COMMENTS (
+            <if test="boardId !=null || boardId !=''">
+            board_id,
+            </if>
+            <if test="noticeId !=null || noticeId !=''">
+            notice_id,
+            </if>
+            user_id,
+            writer,
+            comment,
+            use_yn,
+            insert_user,
+            insert_date
+        ) VALUES (
+        	<if test="boardId !=null || boardId !=''">
+            #{boardId},
+            </if>
+            <if test="noticeId !=null || noticeId !=''">
+            #{noticeId},
+            </if>
+            #{userId},
+            #{writer},
+            #{comment},
+            'Y',
+            #{insertUser},
+            now()
+        )
+    </insert>
+
+    <select id="selectCommentsByBoardId" parameterType="Long" resultType="com.community.community.comments.dto.CommentResponseDto">
+        SELECT
+            comment_id,
+            board_id,
+            notice_id,
+            user_id,
+            writer,
+            comment,
+            use_yn,
+            insert_date,
+            update_date
+        FROM COMMENTS
+        WHERE board_id = #{boardId} AND use_yn = 'Y'
+        ORDER BY insert_date ASC
+    </select>
+
+    <select id="selectCommentsByNoticeId" parameterType="Long" resultType="com.community.community.comments.dto.CommentResponseDto">
+        SELECT
+            comment_id,
+            board_id,
+            notice_id,
+            user_id,
+            writer,
+            comment,
+            use_yn,
+            insert_date,
+            update_date
+        FROM COMMENTS
+        WHERE notice_id = #{noticeId} AND use_yn = 'Y'
+        ORDER BY insert_date ASC
+    </select>
+
+    <select id="selectCommentById" parameterType="Long" resultType="com.community.community.comments.dto.CommentResponseDto">
+        SELECT
+            comment_id,
+            board_id,
+            notice_id,
+            user_id,
+            writer,
+            comment,
+            use_yn,
+            insert_date,
+            update_date
+        FROM COMMENTS
+        WHERE comment_id = #{commentId} AND use_yn = 'Y'
+    </select>
+
+    <update id="updateComment" parameterType="com.community.community.comments.dto.CommentRequestDto">
+        UPDATE COMMENTS
+        SET
+            comment = #{comment},
+            update_user = #{updateUser},
+            update_date = CURRENT_TIMESTAMP
+        WHERE comment_id = #{commentId} AND use_yn = 'Y'
+    </update>
+
+    <update id="deleteComment" parameterType="Long">
+        UPDATE COMMENTS
+        SET
+            use_yn = 'N',
+            update_date = CURRENT_TIMESTAMP
+        WHERE comment_id = #{commentId} AND use_yn = 'Y'
+    </update>
+    
+    <select id="countCommentsByBoardId" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM COMMENTS
+        WHERE board_id = #{boardId} AND use_yn = 'Y'
+    </select>
+
+    <select id="countCommentsByNoticeId" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM COMMENTS
+        WHERE notice_id = #{noticeId} AND use_yn = 'Y'
+    </select>
+
+</mapper>

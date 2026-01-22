@@ -5,12 +5,23 @@
 
 <head>
     <title>게시글 상세</title>
+    <style>
+        .nested-reply {
+            margin-left: 30px;
+            border-left: 3px solid #ddd; /* 약간 흐린 색상으로 변경 */
+            padding-left: 10px;
+            margin-top: 10px; /* 대댓글 간격 추가 */
+            background-color: #f8f9fa; /* 배경색 추가 */
+        }
+        .reply-children {
+            margin-top: 10px; /* 자식 답변 그룹 간격 */
+        }
+    </style>
 </head>
 
 <body>
     <th:block layout:fragment="content">
         <h1 class="mb-4">게시글 상세</h1>
-
         <div class="card">
             <div class="card-header">
                 <h4 class="card-title" th:text="${board.title}">게시글 제목</h4>
@@ -25,6 +36,7 @@
                     <li class="list-group-item" th:each="attachment : ${board.attachments}">
                         <a th:href="@{/attachments/download/{attachmentId}(attachmentId=${attachment.attachmentId})}" th:text="${attachment.fileName}"></a>
                     </li>
+                    <li class="list-group-item" th:if="${#lists.isEmpty(board.attachments)}">첨부파일 없음</li>
                 </ul>
             </div>
         </div>
@@ -35,6 +47,466 @@
             <a href="#" class="btn btn-info">수정</a>
             <a href="#" class="btn btn-danger">삭제</a>
         </div>
+
+        <!-- 댓글 섹션 -->
+        <div class="mt-5">
+            <h3>댓글</h3>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form id="commentForm">
+                        <div class="mb-3">
+                            <textarea class="form-control" id="commentContent" rows="3" placeholder="댓글을 입력하세요" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">댓글 작성</button>
+                    </form>
+                </div>
+            </div>
+            <div id="commentsList" class="list-group">
+                <!-- 댓글 목록이 여기에 동적으로 추가될 예정입니다. -->
+            </div>
+        </div>
+
+        <!-- 답변 글 섹션 -->
+        <div class="mt-5">
+            <h3>답변 글</h3>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form id="replyForm">
+                        <input type="hidden" id="replyParentId" name="parentId" value="" />
+                        <div class="mb-3">
+                            <textarea class="form-control" id="replyContent" rows="3" placeholder="답변 글을 입력하세요" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">답변 작성</button>
+                    </form>
+                </div>
+            </div>
+            <div id="repliesList" class="list-group">
+                <!-- 답변 글 목록이 여기에 동적으로 추가될 예정입니다. -->
+            </div>
+        </div>
+
     </th:block>
+    
 </body>
 </html>
+<script>
+const currentBoardId = `[[${board.boardId}]]`;
+/* const loggedInUserId = `[[${session.userId}]]` || 'Test'; */
+const loggedInUserId = 'Test';
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 댓글 로드
+    loadComments(currentBoardId);
+    // 답변 글 로드
+    loadReplies(currentBoardId);
+
+    // 댓글 폼 제출 이벤트
+    document.getElementById('commentForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        addComment(currentBoardId);
+    });
+
+    // 답변 폼 제출 이벤트
+    document.getElementById('replyForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        addReply(currentBoardId);
+    });
+});
+
+// ==================================== 댓글 로직 ====================================
+async function loadComments(boardId) {
+    try {
+        const response = await fetch(`/comments/board/${boardId}`);
+        if (!response.ok) {
+            throw new Error('댓글을 불러오는데 실패했습니다.');
+        }
+        const comments = await response.json();
+        renderComments(comments);
+    } catch (error) {
+        console.error('Error loading comments:', error);
+        showAlert('댓글을 불러오는데 실패했습니다.', 'danger');
+    }
+}
+
+function renderComments(comments) {
+    const commentsList = document.getElementById('commentsList');
+    commentsList.innerHTML = '';
+    if (comments.length === 0) {
+        commentsList.innerHTML = '<div class="list-group-item text-center text-muted">등록된 댓글이 없습니다.</div>';
+        return;
+    }
+
+    comments.forEach(comment => {
+        commentsList.appendChild(createCommentElement(comment));
+    });
+}
+
+function createCommentElement(comment) {
+    const commentDiv = document.createElement('div');
+    commentDiv.className = 'list-group-item';
+    commentDiv.id = `comment-${comment.commentId}`;
+
+    const isAuthor = loggedInUserId === comment.userId;
+
+    commentDiv.innerHTML = `
+        <div class="d-flex w-100 justify-content-between align-items-center">
+            <h5 class="mb-1">${comment.userId}</h5>
+            <small>${new Date(comment.insertDate).toLocaleString()}</small>
+        </div>
+        <p class="mb-1" id="commentContent-${comment.commentId}">${comment.comment}</p>
+        <div class="comment-actions mt-2" style="text-align: right;">
+            ${isAuthor ? `
+                <button type="button" class="btn btn-sm btn-outline-secondary me-2" onclick="toggleEditForm(${comment.commentId}, '${comment.comment}')">수정</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteComment(${comment.commentId})">삭제</button>
+            ` : ''}
+        </div>
+        <div class="edit-form-container mt-2" id="editFormContainer-${comment.commentId}" style="display: none;">
+            <textarea class="form-control mb-2" id="editContent-${comment.commentId}" rows="2">${comment.comment}</textarea>
+            <button type="button" class="btn btn-sm btn-primary me-2" onclick="updateComment(${comment.commentId})">저장</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="toggleEditForm(${comment.commentId})">취소</button>
+        </div>
+    `;
+    return commentDiv;
+}
+
+async function addComment(boardId) {
+    const commentContentInput = document.getElementById('commentContent');
+    const comment = commentContentInput.value.trim();
+
+    if (!comment) {
+        showAlert('댓글 내용을 입력해주세요.', 'warning');
+        return;
+    }
+    if (!loggedInUserId) {
+        showAlert('로그인이 필요합니다.', 'warning');
+        return;
+    }
+
+    try {
+        const response = await fetch('/comments/insert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ boardId: boardId, comment: comment })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || '댓글 등록에 실패했습니다.');
+        }
+
+        showAlert('댓글이 성공적으로 등록되었습니다.', 'success');
+        commentContentInput.value = '';
+        loadComments(boardId);
+    } catch (error) {
+        console.error('Error adding comment:', error);
+        showAlert(error.message || '댓글 등록 중 오류가 발생했습니다.', 'danger');
+    }
+}
+
+function toggleEditForm(commentId, currentContent) {
+    const editFormContainer = document.getElementById(`editFormContainer-${commentId}`);
+    const commentContentElement = document.getElementById(`commentContent-${commentId}`);
+
+    if (editFormContainer.style.display === 'none') {
+        editFormContainer.style.display = 'block';
+        commentContentElement.style.display = 'none';
+        document.getElementById(`editContent-${commentId}`).value = currentContent;
+    } else {
+        editFormContainer.style.display = 'none';
+        commentContentElement.style.display = 'block';
+    }
+}
+
+async function updateComment(commentId) {
+    const editContentInput = document.getElementById(`editContent-${commentId}`);
+    const comment = editContentInput.value.trim();
+
+    if (!comment) {
+        showAlert('수정할 댓글 내용을 입력해주세요.', 'warning');
+        return;
+    }
+    if (!loggedInUserId) {
+        showAlert('로그인이 필요합니다.', 'warning');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/comments/${commentId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ comment: comment })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || '댓글 수정에 실패했습니다.');
+        }
+
+        showAlert('댓글이 성공적으로 수정되었습니다.', 'success');
+        loadComments(currentBoardId);
+    } catch (error) {
+        console.error('Error updating comment:', error);
+        showAlert(error.message || '댓글 수정 중 오류가 발생했습니다.', 'danger');
+    }
+}
+
+async function deleteComment(commentId) {
+    if (!loggedInUserId) {
+        showAlert('로그인이 필요합니다.', 'warning');
+        return;
+    }
+
+    showConfirm('댓글을 삭제하시겠습니까?', async () => {
+        try {
+            const response = await fetch(`/comments/delete/${commentId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || '댓글 삭제에 실패했습니다.');
+            }
+
+            showAlert('댓글이 성공적으로 삭제되었습니다.', 'success');
+            loadComments(currentBoardId);
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+            showAlert(error.message || '댓글 삭제 중 오류가 발생했습니다.', 'danger');
+        }
+    });
+}
+
+// ==================================== 답변 글 로직 ====================================
+async function loadReplies(parentId) {
+    try {
+        const response = await fetch(`/board/replies/${parentId}`);
+        if (!response.ok) {
+            throw new Error('답변 글을 불러오는데 실패했습니다.');
+        }
+        const replies = await response.json();
+        renderReplies(replies, parentId);
+    } catch (error) {
+        console.error('Error loading replies:', error);
+        showAlert('답변 글을 불러오는데 실패했습니다.', 'danger');
+    }
+}
+
+function renderReplies(replies, targetParentId) {
+	
+	console.log("데이터 확인000000 :::: " + replies.length);
+	console.log("데이터 확인000000 :::: " +targetParentId);
+	console.log("데이터 확인000000 :::: " + currentBoardId);
+    const repliesList = document.getElementById('repliesList');
+    if (targetParentId === currentBoardId) {
+        repliesList.innerHTML = '';
+    }
+
+    if (replies.length === 0 && targetParentId === currentBoardId) {
+        repliesList.innerHTML = '<div class="list-group-item text-center text-muted">등록된 답변 글이 없습니다.</div>';
+        return;
+    }
+    console.log("데이터 확인11111 :::: ");
+    // 재귀적으로 답변 글과 대댓글을 렌더링
+    const buildReplyTree = (replyList, parent) => {
+    	console.log("데이터 확인11111-2 :::: ");
+        const children = replyList.filter(r => r.parentId === parent.boardId);
+        if (children.length === 0) return '';
+
+        let childHtml = '<div class="reply-children">';
+        children.forEach(child => {
+            childHtml += createReplyElement(child).outerHTML;
+            childHtml += buildReplyTree(replyList, child);
+        });
+        childHtml += '</div>';
+        return childHtml;
+    };
+    
+    console.log("데이터 확인22222 :::: ");
+
+    const topLevelReplies = replies.filter(reply => reply.parentId === currentBoardId);
+    topLevelReplies.forEach(reply => {
+    	console.log("데이터 확인11111-1 :::: ");
+        const replyElement = createReplyElement(reply);
+        replyElement.innerHTML += buildReplyTree(replies, reply);
+        repliesList.appendChild(replyElement);
+    });
+}
+
+function createReplyElement(reply) {
+    const replyDiv = document.createElement('div');
+    replyDiv.className = 'list-group-item';
+    replyDiv.id = `reply-${reply.boardId}`;
+
+    // 대댓글 들여쓰기 (CSS 클래스 추가로 스타일링)
+    if (reply.parentId !== currentBoardId) {
+        replyDiv.classList.add('nested-reply');
+    }
+
+    const isAuthor = loggedInUserId === reply.userId;
+
+    replyDiv.innerHTML = `
+        <div class="d-flex w-100 justify-content-between align-items-center">
+            <h5 class="mb-1">${reply.writer} (${reply.userId})</h5>
+            <small>${new Date(reply.insertDate).toLocaleString()}</small>
+        </div>
+        <p class="mb-1" id="replyContent-${reply.boardId}">${reply.detail}</p>
+        <div class="reply-actions mt-2" style="text-align: right;">
+            <button type="button" class="btn btn-sm btn-outline-primary me-2" onclick="toggleReplyForm(${reply.boardId})">답글</button>
+            ${isAuthor ? `
+                <button type="button" class="btn btn-sm btn-outline-secondary me-2" onclick="toggleEditReplyForm(${reply.boardId}, '${reply.detail}')">수정</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteReply(${reply.boardId})">삭제</button>
+            ` : ''}
+        </div>
+        <div class="edit-form-container mt-2" id="editFormContainer-${reply.boardId}" style="display: none;">
+            <textarea class="form-control mb-2" id="editReplyContent-${reply.boardId}" rows="2">${reply.detail}</textarea>
+            <button type="button" class="btn btn-sm btn-primary me-2" onclick="updateReply(${reply.boardId})">저장</button>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="toggleEditReplyForm(${reply.boardId})">취소</button>
+        </div>
+        <div class="reply-to-reply-form-container mt-2" id="replyToReplyFormContainer-${reply.boardId}" style="display: none;">
+            <form onsubmit="event.preventDefault(); addReply(${currentBoardId}, ${reply.boardId});">
+                <textarea class="form-control mb-2" id="replyToReplyContent-${reply.boardId}" rows="2" placeholder="${reply.writer}님에게 답글 달기"></textarea>
+                <button type="submit" class="btn btn-sm btn-primary me-2">답글 작성</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="toggleReplyForm(${reply.boardId})">취소</button>
+            </form>
+        </div>
+    `;
+    return replyDiv;
+}
+
+async function addReply(boardId, parentId = null) {
+    let contentInput;
+    if (parentId) {
+        contentInput = document.getElementById(`replyToReplyContent-${parentId}`);
+    } else {
+        contentInput = document.getElementById('replyContent');
+    }
+
+    const content = contentInput.value.trim();
+
+    if (!content) {
+        showAlert('답변 글 내용을 입력해주세요.', 'warning');
+        return;
+    }
+
+    try {
+        const replyData = {
+            parentId: boardId,
+            userId: 'Test1',
+            detail: content,
+            title: "[답변글] " + boardId  
+        };
+
+        const response = await fetch('/board/reply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(replyData)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || '답변 글 등록에 실패했습니다.');
+        }
+
+        showAlert('답변 글이 성공적으로 등록되었습니다.', 'success');
+        contentInput.value = '';
+        if (parentId) {
+            toggleReplyForm(parentId);
+        }
+        loadReplies(currentBoardId);
+    } catch (error) {
+        console.error('Error adding reply:', error);
+        showAlert(error.message || '답변 글 등록 중 오류가 발생했습니다.', 'danger');
+    }
+}
+
+function toggleEditReplyForm(replyId, currentContent) {
+    const editFormContainer = document.getElementById(`editFormContainer-${replyId}`);
+    const replyContentElement = document.getElementById(`replyContent-${replyId}`);
+
+    if (editFormContainer.style.display === 'none') {
+        editFormContainer.style.display = 'block';
+        replyContentElement.style.display = 'none';
+        document.getElementById(`editReplyContent-${replyId}`).value = currentContent;
+    } else {
+        editFormContainer.style.display = 'none';
+        replyContentElement.style.display = 'block';
+    }
+}
+
+function toggleReplyForm(replyId) {
+    const replyToReplyFormContainer = document.getElementById(`replyToReplyFormContainer-${replyId}`);
+    if (replyToReplyFormContainer.style.display === 'none') {
+        replyToReplyFormContainer.style.display = 'block';
+    } else {
+        replyToReplyFormContainer.style.display = 'none';
+    }
+}
+
+async function updateReply(replyId) {
+    const editContentInput = document.getElementById(`editReplyContent-${replyId}`);
+    const content = editContentInput.value.trim();
+
+    if (!content) {
+        showAlert('수정할 답변 글 내용을 입력해주세요.', 'warning');
+        return;
+    }
+    if (!loggedInUserId) {
+        showAlert('로그인이 필요합니다.', 'warning');
+        return;
+    }
+
+    try {
+        const replyData = {
+            boardId: replyId,
+            detail: content,
+            title: "답변글"
+        };
+
+        const response = await fetch(`/board/${replyId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(replyData)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || '답변 글 수정에 실패했습니다.');
+        }
+
+        showAlert('답변 글이 성공적으로 수정되었습니다.', 'success');
+        loadReplies(currentBoardId);
+    } catch (error) {
+        console.error('Error updating reply:', error);
+        showAlert(error.message || '답변 글 수정 중 오류가 발생했습니다.', 'danger');
+    }
+}
+
+async function deleteReply(replyId) {
+    if (!loggedInUserId) {
+        showAlert('로그인이 필요합니다.', 'warning');
+        return;
+    }
+
+    showConfirm('답변 글을 삭제하시겠습니까?', async () => {
+        try {
+            const response = await fetch(`/board/${replyId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || '답변 글 삭제에 실패했습니다.');
+            }
+
+            showAlert('답변 글이 성공적으로 삭제되었습니다.', 'success');
+            loadReplies(currentBoardId);
+        } catch (error) {
+            console.error('Error deleting reply:', error);
+            showAlert(error.message || '답변 글 삭제 중 오류가 발생했습니다.', 'danger');
+        }
+    });
+}
+</script>
+

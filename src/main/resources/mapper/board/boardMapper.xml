@@ -6,6 +6,7 @@
   <select id = "findAll" parameterType="com.community.community.board.dto.BoardRequestDto" resultType="com.community.community.board.dto.BoardResponseDto">
   	SELECT
   		board_id,
+  		parent_id,
   		user_id,
   		title,
   		writer,
@@ -15,6 +16,7 @@
   		update_date
   	FROM BOARD
   	WHERE use_yn = "Y"
+    AND parent_id IS NULL -- 최상위 게시글만 조회, 답변글은 별도 로직으로 가져옴
   	<if test="keyword != null and keyword != ''">
   		AND (title LIKE CONCAT('%', #{keyword}, '%') OR detail LIKE CONCAT('%', #{keyword}, '%'))
   	</if>
@@ -28,9 +30,10 @@
   	LIMIT #{pageSize} OFFSET #{offset}
   </select>
 
-  <select id="findByBoardId" parameterType="int" resultType="com.community.community.board.dto.BoardResponseDto">
+  <select id="findByBoardId" parameterType="Long" resultType="com.community.community.board.dto.BoardResponseDto">
     SELECT
         board_id,
+        parent_id,
         user_id,
         title,
         writer,
@@ -45,6 +48,9 @@
   <insert id="save" useGeneratedKeys="true"	keyProperty="boardId">
     INSERT INTO BOARD 
     (
+    	<if test="parent_id != null || parent_id != ''">
+    	parent_id,
+    	</if>
     	community_id,
     	user_id,
     	title, 
@@ -57,6 +63,9 @@
     )
     VALUES 
     (
+    	<if test="parent_id != null || parent_id != ''">
+        #{parentId},
+        </if>
     	1,
     	#{writer},
     	#{title}, 
@@ -73,6 +82,7 @@
       SELECT COUNT(*)
       FROM BOARD
       WHERE use_yn = "Y"
+      AND parent_id IS NULL -- 최상위 게시글만 카운트
       <if test="keyword != null and keyword != ''">
   		AND (title LIKE CONCAT('%', #{keyword}, '%') OR detail LIKE CONCAT('%', #{keyword}, '%'))
   	</if>
@@ -84,10 +94,29 @@
   	</if>
   </select>
   
-  <update id="updateView" parameterType="int">
+  <update id="updateView" parameterType="Long">
   	update board
   	set views = views + 1
   	where board_id = #{boardId}
   </update>
+
+  <!-- 특정 게시글의 답변 (대댓글) 목록 조회 -->
+  <select id="findRepliesByParentId" parameterType="Long" resultType="com.community.community.board.dto.BoardResponseDto">
+      SELECT
+          board_id,
+          parent_id,
+          user_id,
+          title,
+          writer,
+          detail,
+          views,
+          insert_user,
+          insert_date,
+          update_user,
+          update_date
+      FROM BOARD
+      WHERE parent_id = #{parentId} AND use_yn = 'Y'
+      ORDER BY insert_date ASC
+  </select>
   
   </mapper>
