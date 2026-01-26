@@ -8,6 +8,10 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
-    List<UserResponseDto> findAll(UserRequestDto userRequestDto); // findAll도 userRequestDto를 받도록 변경
+    List<UserResponseDto> findAll(UserRequestDto userRequestDto);
     int countAll(UserRequestDto userRequestDto);
+    int updateUseYn(String userId, String useYn);
+    int updateUser(UserRequestDto userRequestDto);
+    int addUser(UserRequestDto userRequestDto);
+    UserResponseDto findById(String userId);
 }

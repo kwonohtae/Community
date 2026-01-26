@@ -48,7 +48,7 @@ public class NoticeServiceImpl implements NoticeService {
     
     @Override
     @Transactional
-    public int save(NoticeRequestDto noticeRequestDto, List<MultipartFile> files) {
+    public long save(NoticeRequestDto noticeRequestDto, List<MultipartFile> files) {
         noticeRequestDto.setWriter("user01"); // TODO: 실제 사용자 정보로 대체
         noticeMapper.save(noticeRequestDto);
         

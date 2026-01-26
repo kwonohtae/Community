@@ -1,5 +1,6 @@
 package com.community.community.board.dto;
 
+import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.util.List;
 import com.community.community.attachments.dto.AttachmentsResponseDto;
@@ -21,5 +22,5 @@ public class BoardResponseDto {
     private LocalDateTime insertDate;
     private String updateUser;
     private LocalDateTime updateDate;
-    private List<AttachmentsResponseDto> attachments;
+    private List<AttachmentsResponseDto> attachments = new ArrayList<>(); // Initialize the list
 }

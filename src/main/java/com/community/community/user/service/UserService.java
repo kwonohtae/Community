@@ -8,4 +8,8 @@ import java.util.List;
 public interface UserService {
     List<UserResponseDto> findAll(UserRequestDto userRequestDto);
     int getTotalCount(UserRequestDto userRequestDto);
+    int deleteUserSoftly(String userId);
+    int updateUser(UserRequestDto userRequestDto);
+    int addUser(UserRequestDto userRequestDto);
+    UserResponseDto findById(String userId);
 }

@@ -12,6 +12,6 @@ public interface NoticeService {
 	List<NoticeResponseDto> findAll(NoticeRequestDto noticeRequestDto);
 	int getTotalCount(NoticeRequestDto noticeRequestDto);
 	NoticeResponseDto findByNoticeId(Long noticeId);
-	int save(NoticeRequestDto noticeRequestDto, List<MultipartFile> files);
+	long save(NoticeRequestDto noticeRequestDto, List<MultipartFile> files);
 	int updateView(Long noticeId);
 }

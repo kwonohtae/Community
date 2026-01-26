@@ -10,104 +10,10 @@
 <body>
     <th:block layout:fragment="content">
         <h1 class="mb-4">게시글 작성</h1>
-        <form action="/board/save" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="title">제목</label>
-                <input type="text" class="form-control" id="title" name="title" required>
-            </div>
-            <div class="form-group">
-                <label for="writer">작성자</label>
-                <input type="text" class="form-control" id="writer" name="writer" required>
-            </div>
-            <div class="form-group">
-                <label for="detail">내용</label>
-                <textarea class="form-control" id="detail" name="detail" rows="10" required></textarea>
-            </div>
-            <div class="form-group">
-                <label>첨부파일</label>
-                <div id="file-attachments-container">
-                    <!-- File inputs will be added here dynamically -->
-                </div>
-                <button type="button" id="add-file-btn" class="btn btn-sm btn-secondary mt-2">파일 추가</button>
-            </div>
-            <button type="submit" class="btn btn-primary">등록</button>
-            <a href="/board/list" class="btn btn-secondary">목록으로</a>
-        </form>
+        
+        <!--/* 폼과 스크립트가 통합된 프래그먼트로 교체 */-->
+        <div th:replace="~{fragments/board_form :: boardFormWithScript(action='/board/save', board=${board})}"></div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const container = document.getElementById('file-attachments-container');
-                const addBtn = document.getElementById('add-file-btn');
-                const maxFiles = 3;
-
-                const createFileUploader = () => {
-                    if (container.children.length >= maxFiles) {
-                        return;
-                    }
-
-                    const uploaderDiv = document.createElement('div');
-                    uploaderDiv.className = 'input-group mb-2';
-
-                    const fileInput = document.createElement('input');
-                    fileInput.type = 'file';
-                    fileInput.className = 'form-control';
-                    fileInput.name = 'attachments'; // Changed to 'attachments' for multiple files
-
-                    const infoDiv = document.createElement('div');
-                    infoDiv.className = 'form-text text-muted w-100 mt-1';
-
-                    fileInput.addEventListener('change', function(event) {
-                        const file = event.target.files[0];
-                        if (file) {
-                            const fileName = file.name;
-                            const fileExtension = fileName.split('.').pop();
-                            const fileSize = formatBytes(file.size);
-                            infoDiv.innerHTML = `<strong>선택된 파일:</strong> ${fileName} | <strong>확장자:</strong> .${fileExtension} | <strong>크기:</strong> ${fileSize}`;
-                        } else {
-                            infoDiv.innerHTML = '';
-                        }
-                    });
-                    
-                    const removeBtn = document.createElement('button');
-                    removeBtn.type = 'button';
-                    removeBtn.className = 'btn btn-outline-danger';
-                    removeBtn.textContent = '삭제';
-                    removeBtn.addEventListener('click', function() {
-                        uploaderDiv.remove();
-                        updateAddButtonState();
-                    });
-
-                    uploaderDiv.appendChild(fileInput);
-                    uploaderDiv.appendChild(removeBtn);
-                    uploaderDiv.appendChild(infoDiv);
-                    container.appendChild(uploaderDiv);
-
-                    updateAddButtonState();
-                };
-
-                const updateAddButtonState = () => {
-                    if (container.children.length >= maxFiles) {
-                        addBtn.style.display = 'none';
-                    } else {
-                        addBtn.style.display = 'block';
-                    }
-                };
-
-                addBtn.addEventListener('click', createFileUploader);
-
-                // Initial uploader
-                createFileUploader();
-            });
-
-            function formatBytes(bytes, decimals = 2) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const dm = decimals < 0 ? 0 : decimals;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-            }
-        </script>
     </th:block>
 </body>
 </html>

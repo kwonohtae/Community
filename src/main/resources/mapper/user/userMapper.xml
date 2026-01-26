@@ -16,6 +16,7 @@
         insert_date,
         update_date
     FROM user
+    WHERE use_yn = 'Y'
     ORDER BY insert_date DESC
     LIMIT #{pageSize} OFFSET #{offset}
   </select>
@@ -23,5 +24,79 @@
   <select id="countAll" parameterType="com.community.community.user.dto.UserRequestDto" resultType="int">
       SELECT COUNT(*)
       FROM user
+      WHERE use_yn = 'Y'
   </select>
+  
+  <update id="updateUseYn">
+    UPDATE user
+    SET
+        use_yn = #{useYn},
+        update_date = NOW()
+    WHERE user_id = #{userId}
+  </update>
+  
+  <update id="updateUser" parameterType="com.community.community.user.dto.UserRequestDto">
+    UPDATE user
+    <set>
+        <if test="userName != null and userName != ''">
+            user_name = #{userName},
+        </if>
+        <if test="userNickName != null and userNickName != ''">
+            user_nick_name = #{userNickName},
+        </if>
+        <if test="userEmail != null and userEmail != ''">
+            user_email = #{userEmail},
+        </if>
+        <if test="userPhone != null and userPhone != ''">
+            user_phone = #{userPhone},
+        </if>
+        <if test="role != null and role != ''">
+            role = #{role},
+        </if>
+        update_date = NOW()
+    </set>
+    WHERE user_id = #{userId}
+  </update>
+  
+  <select id="findById" parameterType="String" resultType="com.community.community.user.dto.UserResponseDto">
+    SELECT
+        user_id,
+        user_name,
+        user_nick_name,
+        user_phone,
+        user_email,
+        use_yn,
+        role,
+        insert_date,
+        update_date
+    FROM user
+    WHERE user_id = #{userId}
+  </select>
+  
+  <insert id="addUser" parameterType="com.community.community.user.dto.UserRequestDto">
+    INSERT INTO user (
+        user_id, 
+        password, 
+        user_name, 
+        user_nick_name, 
+        user_email, 
+        user_phone, 
+        role, 
+        use_yn, 
+        insert_date, 
+        update_date
+    )
+    VALUES (
+        #{userId},
+        #{password},
+        #{userName},
+        #{userNickName},
+        #{userEmail},
+        #{userPhone},
+        #{role},
+        'Y',
+        NOW(),
+        NOW()
+    )
+  </insert>
 </mapper>

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.community.community.board.dto.BoardRequestDto;
@@ -34,7 +33,7 @@ public class BoardController {
 
     @GetMapping("/list")
     public String boardList(
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "1", required = false) int page,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) String keyword,
@@ -61,17 +60,19 @@ public class BoardController {
     }
 
     @GetMapping("/writePage")
-    public String boardWritePage() {
+    public String boardWritePage(Model model) {
+    	model.addAttribute("board", new BoardRequestDto());
         return "board/write";
     }
 
     @PostMapping("/save")
     public String saveBoard(@ModelAttribute BoardRequestDto boardRequestDto, @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments, HttpSession session) { // HttpSession 추가
-        String userId = (String) session.getAttribute("userId"); // userId 가져오기
-        if (userId == null) {
-            // 로그인되어 있지 않으면 로그인 페이지로 리다이렉트 또는 에러 처리
-            return "redirect:/user/loginPage"; // 예시
-        }
+//        String userId = (String) session.getAttribute("userId"); // userId 가져오기
+        String userId = "Test"; // userId 가져오기
+//        if (userId == null) {
+//            // 로그인되어 있지 않으면 로그인 페이지로 리다이렉트 또는 에러 처리
+//            return "redirect:/user/loginPage"; // 예시
+//        }
         boardRequestDto.setUserId(userId); // userId 설정
         boardRequestDto.setWriter(userId); // writer 설정 (임시로 userId와 동일하게)
 
@@ -84,7 +85,7 @@ public class BoardController {
 
     // 답변 글 등록을 위한 API 엔드포인트 추가
     @PostMapping("/reply")
-    public ResponseEntity<String> saveReply(@RequestBody BoardRequestDto boardRequestDto, HttpSession session) {
+    public ResponseEntity<String> saveReply(@ModelAttribute BoardRequestDto boardRequestDto, @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments, HttpSession session) {
 //        String userId = (String) session.getAttribute("userId");
         String userId = "Test";
 //        if (userId == null) {
@@ -93,8 +94,8 @@ public class BoardController {
         boardRequestDto.setUserId(userId);
         boardRequestDto.setWriter(userId); // 작성자도 userId로 설정 (임시)
         
-        log.info("saveReply 진입 데이터 확인 ::::: {}", boardRequestDto);
-        int replyId = boardService.save(boardRequestDto, null); // 답변 글은 첨부파일이 없다고 가정
+        log.info("saveReply 진입 데이터 확인 ::::: {} ::::::  {} :::::: {} ", boardRequestDto , boardRequestDto.getParentId() , attachments);
+        int replyId = boardService.save(boardRequestDto, attachments); 
         if (replyId > 0) {
             return ResponseEntity.status(HttpStatus.CREATED).body("답변 글이 성공적으로 등록되었습니다.");
         } else {
@@ -104,13 +105,18 @@ public class BoardController {
 
 
     @GetMapping("/detail/{boardId}")
-    public String boardDetail(@PathVariable Long boardId, @RequestParam int page, Model model) { // int -> Long 변경
+    public String boardDetail(@PathVariable Long boardId, @RequestParam(defaultValue = "1", required = false) int page, Model model) { // int -> Long 변경
     	log.info("boardDetail 진입 데이터 확인 ::: {} :::::: {} ", boardId , page);
     	boardService.updateView(boardId);
     	BoardResponseDto board = boardService.findByBoardId(boardId);
     	if(board != null) { // !board.equals("") 제거 (객체 비교에는 적합하지 않음)
     		model.addAttribute("board", board);
     		model.addAttribute("page", page);
+    		
+            BoardRequestDto replyBoard = new BoardRequestDto();
+            replyBoard.setParentId(board.getBoardId());
+            model.addAttribute("replyBoard", replyBoard);
+    		
     		return "board/detail";	
     	}else {
     		return "error/500";

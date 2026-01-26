@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.community.community.attachments.service.AttachmentsService;
 import com.community.community.notice.dto.NoticeRequestDto;
 import com.community.community.notice.dto.NoticeResponseDto;
 import com.community.community.notice.service.NoticeService;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NoticeController {
 	
     private final NoticeService noticeService;
+    private final AttachmentsService attachmentsService;
 	
     @GetMapping("/list")
     public String noticeList(
@@ -64,14 +66,13 @@ public class NoticeController {
     @PostMapping("/save")
     public String saveNotice(@ModelAttribute NoticeRequestDto noticeRequestDto, @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments) {
     	log.info("saveNotice 진입 데이터 확인1 ::::: {}",noticeRequestDto);
-    	int noticeId = noticeService.save(noticeRequestDto, attachments);
+    	long noticeId = noticeService.save(noticeRequestDto, attachments);
     	log.info("saveNotice 결과 데이터 확인 ::::: {}", noticeId);
     	
-//    	if(!attachments.get(0).isEmpty()) {
-//    		log.info("saveNotice 진입 데이터 확인2 ::::: {}",attachments.get(0).getOriginalFilename());
-//    		
-//    		attachmentsService.saveFiles(attachments, "notice", noticeId, noticeRequestDto.getWriter());
-//    	}
+    	if(!attachments.get(0).isEmpty()) {
+    		log.info("saveNotice 진입 데이터 확인2 ::::: {}",attachments.get(0).getOriginalFilename());
+    		attachmentsService.saveFiles(attachments, "notice", noticeId, noticeRequestDto.getWriter());
+    	}
         return "redirect:/notice/list";
     }
 

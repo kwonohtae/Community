@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
-
-<head>
-    <title>공지사항 작성</title>
-</head>
-
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
-    <th:block layout:fragment="content">
-        <h1 class="mb-4">공지사항 작성</h1>
-        <form action="/notice/save" method="post" enctype="multipart/form-data">
+    
+    <!--/* 폼과 스크립트를 하나로 묶은 새로운 프래그먼트 */-->
+    <div th:fragment="boardFormWithScript(action, board)">
+    
+        <form th:action="@{${action}}" th:object="${board}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:if="*{boardId != null}" th:field="*{boardId}" />
+
             <div class="form-group">
                 <label for="title">제목</label>
-                <input type="text" class="form-control" id="title" name="title" required>
+                <input type="text" class="form-control" id="title" name="title" th:field="*{title}" required>
             </div>
             <div class="form-group">
-                <label for="content">내용</label>
-                <textarea class="form-control" id="detail" name="detail" rows="10" required>content</textarea>
+                <label for="writer">작성자</label>
+                <input type="text" class="form-control" id="writer" name="writer" th:field="*{writer}" required>
+            </div>
+            <div class="form-group">
+                <label for="detail">내용</label>
+                <textarea class="form-control" id="detail" name="detail" rows="10" th:field="*{detail}" required></textarea>
             </div>
             <div class="form-group">
                 <label>첨부파일</label>
@@ -27,17 +28,20 @@
                 <button type="button" id="add-file-btn" class="btn btn-sm btn-secondary mt-2">파일 추가</button>
             </div>
             <button type="submit" class="btn btn-primary">등록</button>
-            <a th:href="@{/notice/list}" class="btn btn-secondary">목록으로</a>
+            <a th:href="@{/board/list}" class="btn btn-secondary">목록으로</a>
         </form>
 
-        
-    </th:block>
-</body>
-</html>
-<script>
-            document.addEventListener('DOMContentLoaded', function () {
+        <script>
+            // 이 스크립트는 위의 form과 항상 함께 삽입됩니다.
+            (function() {
                 const container = document.getElementById('file-attachments-container');
                 const addBtn = document.getElementById('add-file-btn');
+
+                if (!container || !addBtn) {
+                    console.error("첨부파일 스크립트 초기화 실패: 대상 요소를 찾을 수 없습니다.");
+                    return;
+                }
+
                 const maxFiles = 3;
 
                 const createFileUploader = () => {
@@ -51,7 +55,7 @@
                     const fileInput = document.createElement('input');
                     fileInput.type = 'file';
                     fileInput.className = 'form-control';
-                    fileInput.name = 'attachments'; // Changed to 'attachments' for multiple files
+                    fileInput.name = 'attachments';
 
                     const infoDiv = document.createElement('div');
                     infoDiv.className = 'form-text text-muted w-100 mt-1';
@@ -62,7 +66,7 @@
                             const fileName = file.name;
                             const fileExtension = fileName.split('.').pop();
                             const fileSize = formatBytes(file.size);
-                            infoDiv.innerHTML = '<strong>선택된 파일:</strong> ' + fileName + ' | <strong>확장자:</strong> .' + fileExtension + ' | <strong>크기:</strong> ' + fileSize;
+                            infoDiv.innerHTML = '<strong>선택된파일:</strong> ' + fileName + ' | <strong>확장자:</strong> .' + fileExtension + ' | <strong>크기:</strong> ' + fileSize;
                         } else {
                             infoDiv.innerHTML = '';
                         }
@@ -97,7 +101,7 @@
 
                 // Initial uploader
                 createFileUploader();
-            });
+            })();
 
             function formatBytes(bytes, decimals = 2) {
                 if (bytes === 0) return '0 Bytes';
@@ -108,3 +112,7 @@
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
             }
         </script>
+    </div>
+
+</body>
+</html>

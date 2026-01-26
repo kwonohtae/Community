@@ -5,10 +5,10 @@
 
     <insert id="insertComment" parameterType="com.community.community.comments.dto.CommentRequestDto">
         INSERT INTO COMMENTS (
-            <if test="boardId !=null || boardId !=''">
+            <if test="boardId != null">
             board_id,
             </if>
-            <if test="noticeId !=null || noticeId !=''">
+            <if test="noticeId != null">
             notice_id,
             </if>
             user_id,
@@ -18,10 +18,10 @@
             insert_user,
             insert_date
         ) VALUES (
-        	<if test="boardId !=null || boardId !=''">
+        	<if test="boardId != null">
             #{boardId},
             </if>
-            <if test="noticeId !=null || noticeId !=''">
+            <if test="noticeId != null">
             #{noticeId},
             </if>
             #{userId},

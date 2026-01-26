@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class NoticeRequestDto {
 
-	private int noticeId;
+	private Long noticeId;
+	private String userId;
 	private String title;
 	private String detail;
 	private String writer;
