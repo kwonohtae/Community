@@ -60,7 +60,7 @@ public class AdminController {
     public ResponseEntity<?> deleteUserSoftly(@RequestBody UserRequestDto userRequestDto) {
         log.info("deleteUserSoftly 진입 데이터 확인 ::::: {}", userRequestDto.getUserId());
         try {
-            int result = userService.deleteUserSoftly(userRequestDto.getUserId());
+            int result = userService.deleteUserSoftly(userRequestDto.getUserId(),userRequestDto.getUseYn());
             if (result > 0) {
                 return ResponseEntity.ok().body(new AdminResponse(true, "사용자가 성공적으로 삭제되었습니다."));
             } else {

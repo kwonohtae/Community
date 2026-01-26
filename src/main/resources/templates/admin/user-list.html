@@ -5,6 +5,7 @@
 
 <head>
 <title>사용자 관리</title>
+<link rel="stylesheet" th:href="@{/css/corporate-style.css}">
 </head>
 
 <th:block layout:fragment="content">
@@ -47,8 +48,14 @@
                                          data-user-role=${user.role != null ? user.role : ''}"
 						onclick="openEditUserModal(this)">수정</button>
 					<button class="btn btn-sm btn-danger"
+						th:if="${user.useYn == 'Y'}"
 						th:attr="data-user-id=${user.userId}"
-						onclick="confirmDeleteUser(this)">삭제</button>
+						onclick="confirmDeleteUser(this, 'N')">비활성화</button>
+					<button class="btn btn-sm btn-success"
+						th:if="${user.useYn == 'N'}"
+						th:attr="data-user-id=${user.userId}"
+						onclick="confirmDeleteUser(this, 'Y')">활성화</button>
+					
 				</td>
 			</tr>
 		</tbody>
@@ -80,59 +87,7 @@
 </th:block>
 </body>
 </html>
-<th:block>
-<!-- User Edit Modal -->
-	<div class="modal fade" id="userEditModal" tabindex="-1"
-		aria-labelledby="userEditModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="userEditModalLabel">사용자 정보 수정</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<form id="userEditForm">
-						<input type="hidden" id="editUserId" name="userId">
-						<div class="mb-3">
-							<label for="editUserName" class="form-label">이름</label> <input
-								type="text" class="form-control" id="editUserName"
-								name="userName">
-						</div>
-						<div class="mb-3">
-							<label for="editUserNickName" class="form-label">닉네임</label> <input
-								type="text" class="form-control" id="editUserNickName"
-								name="userNickName">
-						</div>
-						<div class="mb-3">
-							<label for="editUserEmail" class="form-label">이메일</label> <input
-								type="email" class="form-control" id="editUserEmail"
-								name="userEmail">
-						</div>
-						<div class="mb-3">
-							<label for="editUserPhone" class="form-label">연락처</label> <input
-								type="tel" class="form-control" id="editUserPhone"
-								name="userPhone">
-						</div>
-						<div class="mb-3">
-							<label for="editRole" class="form-label">권한</label> <select
-								class="form-select" id="editRole" name="role">
-								<option value="USER">USER</option>
-								<option value="ADMIN">ADMIN</option>
-							</select>
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
-						data-bs-dismiss="modal">닫기</button>
-					<button type="button" class="btn btn-primary"
-						id="saveUserChangesBtn">저장</button>
-				</div>
-			</div>
-			</div>
-	</div>
-</th:block>
+
 <th:block>
 <!-- User Add Modal -->
 	<div class="modal fade" id="userAddModal" tabindex="-1"
@@ -147,9 +102,13 @@
 				<div class="modal-body">
 					<form id="userAddForm">
 						<div class="mb-3">
-							<label for="addUserId" class="form-label">아이디</label> <input
-								type="text" class="form-control" id="addUserId" name="userId"
-								required>
+							<label for="addUserId" class="form-label">아이디</label> 
+							<div class="input-group">
+								<input type="text" class="form-control" id="addUserId" name="userId" placeholder="4자 이상 영문, 숫자" required>
+								<div class="input-group-append">
+	                        		<button class="btn btn-outline-secondary" type="button" id="idCheckButton">중복 확인</button>
+	                    		</div>
+                    		</div>
 						</div>
 						<div class="mb-3">
 							<label for="addUserPassword" class="form-label">비밀번호</label> <input
@@ -194,13 +153,77 @@
 		</div>
 	</div>
 </th:block>
+<th:block>
+<!-- User Edit Modal -->
+	<div class="modal fade" id="userEditModal" tabindex="-1"
+		aria-labelledby="userEditModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="userEditModalLabel">사용자 정보 수정</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form id="userEditForm">
+						<input type="hidden" id="editUserId" name="userId">
+						<div class="form-group mb-3">
+							<label for="editUserName" class="form-label">이름</label> <input
+								type="text" class="form-control" id="editUserName"
+								name="userName" required>
+						</div>
+						<div class="mb-3">
+							<label for="editUserNickName" class="form-label">닉네임</label> <input
+								type="text" class="form-control" id="editUserNickName"
+								name="userNickName" required>
+						</div>
+						<div class="mb-3">
+							<label for="editUserEmail" class="form-label">이메일</label> <input
+								type="email" class="form-control" id="editUserEmail"
+								name="userEmail" required>
+						</div>
+						<div class="mb-3">
+							<label for="editUserPhone" class="form-label">연락처</label> <input
+								type="tel" class="form-control" id="editUserPhone"
+								name="userPhone" required>
+						</div>
+						<div class="mb-3">
+							<label for="editRole" class="form-label">권한</label> <select
+								class="form-select" id="editRole" name="role">
+								<option value="USER">USER</option>
+								<option value="ADMIN">ADMIN</option>
+							</select>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">닫기</button>
+					<button type="button" class="btn btn-primary"
+						id="saveUserChangesBtn">저장</button>
+				</div>
+			</div>
+			</div>
+	</div>
+</th:block>
 
 <th:block layout:fragment="script"></th:block>
 
 <script>
 
 	document.addEventListener("DOMContentLoaded", function(){
-		console.log("확인!!");
+		const saveChangesBtn = document.getElementById('saveUserChangesBtn');
+        if(saveChangesBtn) {
+            saveChangesBtn.addEventListener('click', saveUserChanges);
+        };
+        
+       
+        
+		/* const checkIdbtn = document.getElementById("idCheckButton"); 
+		if (checkIdbtn) {
+			checkIdbtn.addEventListener ('click', userIdCheck);
+		} */
+		
 	});
 	
 	function openAddUserModal (){
@@ -215,11 +238,146 @@
 	
 	function openEditUserModal(button){
 		console.log("기존 회원 수정 안내 modal 오픈")
+		document.getElementById('editUserId').value = button.getAttribute('data-user-id');
+		document.getElementById('editUserName').value = button.getAttribute('data-user-name');
+		document.getElementById('editUserNickName').value = button.getAttribute('data-user-nick-name');
+		document.getElementById('editUserEmail').value = button.getAttribute('data-user-email');
+		document.getElementById('editUserPhone').value = button.getAttribute('data-user-phone');
+		const role = button.getAttribute('data-user-role');
+		document.getElementById('editRole').value = role;
 		const modalElementEditUser = document.getElementById('userEditModal');
 		if (modalElementEditUser) {
 			const constuserEditModal = new bootstrap.Modal(modalElementEditUser);
 			constuserEditModal.show();
 		}
 	};
+	
+	// 모달 팝업 내에서 수정한 고객 정보 데이터 전송
+	async function saveUserChanges() {
+        const form = document.getElementById('userEditForm');
+        const formData = new FormData(form);
+        const userData = Object.fromEntries(formData.entries());
+        
+     	// 빈값 여부 확인
+        const text1 = document.getElementById('editUserName').value;
+        if(!isValidName(text1)){
+        	showAlert('이름란에 유효한 값을 입력해주세요.', 'danger');
+        	return;
+        };
+        
+        const text2 = document.getElementById('editUserNickName').value;
+        if(!isValidName(text2)){
+        	showAlert('닉네임란에 유효한 값을 입력해주세요.', 'danger');
+        	return;
+        };
+
+        // 이메일 유효성 검사
+        const editUserEmail = document.getElementById('editUserEmail').value;
+        if (editUserEmail && !isValidEmail(editUserEmail)) {
+            showAlert('유효한 이메일 주소를 입력해주세요.', 'danger');
+            return;
+        }
+
+        // 전화번호 유효성 검사
+        const editUserPhone = document.getElementById('editUserPhone').value;
+        if (editUserPhone && !isValidPhone(editUserPhone)) { // 전화번호가 비어있지 않은 경우에만 검사
+            showAlert('유효한 전화번호를 입력해주세요. (예: 01012345678)', 'danger');
+            return;
+        }
+        
+        const modalElement = document.getElementById('userEditModal');
+        const userEditModal = bootstrap.Modal.getInstance(modalElement);
+
+        try {
+            const response = await fetch('/admin/users/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || '사용자 정보 수정에 실패했습니다.');
+            }
+
+            const result = await response.json();
+            
+            if (result.success) {
+                if (userEditModal) {
+                    userEditModal.hide();
+                }
+                showAlert('사용자 정보가 성공적으로 수정되었습니다.', 'success');
+                setTimeout(() => { window.location.reload(); }, 1500);
+            } else {
+                showAlert(result.message || '사용자 정보 수정에 실패했습니다.', 'danger');
+            }
+
+        } catch (error) {
+            console.error('Error updating user:', error);
+            showAlert(error.message || '사용자 정보 수정 중 오류가 발생했습니다.', 'danger');
+        }
+    }
+
+    // 이메일 유효성 검사 함수
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    // 전화번호 유효성 검사 함수 (하이픈 없이 숫자만 10~11자리)
+    function isValidPhone(phone) {
+        const phoneRegex = /^\d{10,11}$/;
+        return phoneRegex.test(phone);
+    }
+    
+    // 유저 이름, 닉네임 유효성 검사 함수 (데이터 값이 있는지 없는지에 따른 검증)
+    function isValidName(text){
+    	if(text.length > 0){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    }
+    
+    function confirmDeleteUser(button, useYn) {
+        const userId = button.getAttribute('data-user-id');
+        showConfirm(`사용자 ID: ${userId}의 상태를 변경하시겠습니까?`, async () => {
+            try {
+                const response = await fetch('/admin/users/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId: userId, useYn:useYn })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || '사용자 상태 변경에 실패했습니다.');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('사용자의 상태가 성공적으로 변경되었습니다.', 'success');
+                    setTimeout(() => { window.location.reload(); }, 1500);
+                } else {
+                    showAlert(result.message || '사용자 상태 변경에 실패했습니다.', 'danger');
+                }
+
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showAlert(error.message || '사용자 상태 변경 중 오류가 발생했습니다.', 'danger');
+            }
+        });
+    }
+	
+	/* function userIdCheck (){
+		const userId = document.getElementById("addUserId").value;
+		console.log("아이디 확인 : " + userId);
+	} */
+	
+	
 
 </script>

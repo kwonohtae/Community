@@ -16,7 +16,6 @@
         insert_date,
         update_date
     FROM user
-    WHERE use_yn = 'Y'
     ORDER BY insert_date DESC
     LIMIT #{pageSize} OFFSET #{offset}
   </select>
@@ -24,7 +23,6 @@
   <select id="countAll" parameterType="com.community.community.user.dto.UserRequestDto" resultType="int">
       SELECT COUNT(*)
       FROM user
-      WHERE use_yn = 'Y'
   </select>
   
   <update id="updateUseYn">

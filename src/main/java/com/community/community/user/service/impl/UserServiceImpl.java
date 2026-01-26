@@ -30,14 +30,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public int deleteUserSoftly(String userId) {
-        return userMapper.updateUseYn(userId, "N");
+    public int deleteUserSoftly(String userId, String useYn) {
+        return userMapper.updateUseYn(userId, useYn);
+//        return 0;
     }
 
     @Override
     @Transactional
     public int updateUser(UserRequestDto userRequestDto) {
         return userMapper.updateUser(userRequestDto);
+        // return 0;
     }
 
     @Override
