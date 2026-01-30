@@ -13,4 +13,5 @@ public interface UserService {
     int addUser(UserRequestDto userRequestDto);
     UserResponseDto findById(String userId);
     UserResponseDto findByEmail(String userEmail);
+    boolean login(UserRequestDto userRequestDto);
 }

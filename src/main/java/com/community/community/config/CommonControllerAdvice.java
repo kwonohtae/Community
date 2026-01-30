@@ -1,0 +1,29 @@
+package com.community.community.config;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+@ControllerAdvice
+public class CommonControllerAdvice {
+
+    @ModelAttribute
+    public void addGlobalAttributes(Model model, Authentication authentication) {
+        boolean isLoggedIn = authentication != null && authentication.isAuthenticated() && !(authentication.getPrincipal() instanceof String && authentication.getPrincipal().equals("anonymousUser"));
+        boolean isAdmin = false;
+
+        if (isLoggedIn) {
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                if (authority.getAuthority().equals("ROLE_ADMIN")) {
+                    isAdmin = true;
+                    break;
+                }
+            }
+        }
+
+        model.addAttribute("isLoggedIn", isLoggedIn);
+        model.addAttribute("isAdmin", isAdmin);
+    }
+}

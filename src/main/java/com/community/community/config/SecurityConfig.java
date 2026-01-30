@@ -2,11 +2,17 @@ package com.community.community.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.community.community.user.mapper.UserMapper;
+import com.community.community.user.service.impl.CustomUserDetailsService; // Will create this class soon
 
 @Configuration
 @EnableWebSecurity
@@ -27,5 +33,17 @@ public class SecurityConfig {
             );
 
         return http.build();
+    }
+
+    // Expose AuthenticationManager as a bean
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    // Provide a custom UserDetailsService
+    @Bean
+    public UserDetailsService userDetailsService(UserMapper userMapper) {
+        return new CustomUserDetailsService(userMapper);
     }
 }

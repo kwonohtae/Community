@@ -5,12 +5,15 @@ import com.community.community.user.dto.UserResponseDto;
 import com.community.community.user.mapper.UserMapper;
 import com.community.community.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -57,5 +60,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto findByEmail(String userEmail) {
         return userMapper.findByEmail(userEmail);
+    }
+
+    @Override
+    public boolean login(UserRequestDto userRequestDto) {
+        UserResponseDto user = userMapper.findById(userRequestDto.getUserId());
+       	if (user != null && passwordEncoder.matches(userRequestDto.getPassword(), user.getPassword())) {
+            return true;
+        }
+        return false;
     }
 }

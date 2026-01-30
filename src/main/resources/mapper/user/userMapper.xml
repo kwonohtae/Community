@@ -59,6 +59,7 @@
   <select id="findById" parameterType="String" resultType="com.community.community.user.dto.UserResponseDto">
     SELECT
         user_id,
+        password,
         user_name,
         user_nick_name,
         user_phone,
@@ -96,8 +97,8 @@
         user_phone, 
         role, 
         use_yn, 
-        insert_date, 
-        update_date
+        insert_user,
+        insert_date 
     )
     VALUES (
         #{userId},
@@ -108,7 +109,7 @@
         #{userPhone},
         #{role},
         'Y',
-        NOW(),
+        #{userId},
         NOW()
     )
   </insert>

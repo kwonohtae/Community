@@ -11,7 +11,7 @@
 <div layout:fragment="content">
     <div class="login-container">
         <h2 class="text-center">로그인</h2>
-        <form action="/user/login" method="post">
+        <form id="userForm">
             <div class="form-group">
                 <label for="userId">아이디</label>
                 <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디를 입력하세요" required>
@@ -20,11 +20,57 @@
                 <label for="password">비밀번호</label>
                 <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-block mt-4">로그인</button>
         </form>
+            <a href="javascript:void(0);" th:onclick="login()"type="button" class="btn btn-primary btn-block mt-4">로그인</button>
         <div class="text-center mt-3">
-            <a href="/user/joinPage">회원가입</a> | <a href="/user/findPage">아이디/비밀번호 찾기</a>
+            <a href="/user/joinPage">회원가입</a> | <a href="/user/find">아이디/비밀번호 찾기</a>
         </div>
     </div>
 </div>
 </html>
+<script>
+
+const url = {
+		login : '/user/login'
+}
+
+async function login(){
+	const userIdInput = document.getElementById("userId");
+	const passwordInput = document.getElementById("password");
+	
+	const userId = userIdInput.value;
+	const password = passwordInput.value;
+
+	if (!userId || !password) {
+        showAlert('아이디와 비밀번호를 모두 입력해주세요.', 'warning');
+        return;
+    }
+	
+	try {
+		const response = await fetch(url.login , {
+			method:'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ userId: userId, password: password })
+		});
+		
+		if (!response.ok) {
+			const errorData = await response.json();
+            showAlert(errorData.message || '로그인 중 오류가 발생했습니다.', 'danger');
+            return;
+		}
+		
+		const result = await response.json();
+		if(result.success) {
+			showAlert(result.message, 'success');
+			window.location.href = "/"; // Redirect to main page or a dashboard
+		} else {
+			showAlert(result.message || '아이디 또는 비밀번호가 올바르지 않습니다.', 'danger');
+		}
+	} catch (error) {
+		console.error('Login error:', error);
+        showAlert('로그인 요청 중 문제가 발생했습니다.', 'danger');
+	}
+}
+</script>

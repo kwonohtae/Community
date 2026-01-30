@@ -25,10 +25,10 @@
         <h1>환영합니다!</h1>
         <p>무엇을 도와드릴까요?</p>
         <div>
-            <a href="/user/loginPage" class="btn btn-primary btn-lg">로그인</a>
-            <a href="/notice/list" class="btn btn-info btn-lg">공지사항</a>
-            <a href="/board/list" class="btn btn-success btn-lg">게시판</a>
-            <a href="/admin/dashboard" class="btn btn-danger btn-lg">관리자</a>
+            <a th:if="${!isLoggedIn}" href="/user/login" class="btn btn-primary btn-lg">로그인</a>
+            <a th:if="${isLoggedIn}" href="/notice/list" class="btn btn-info btn-lg">공지사항</a>
+            <a th:if="${isLoggedIn}" href="/board/list" class="btn btn-success btn-lg">게시판</a>
+            <a th:if="${isLoggedIn and isAdmin}" href="/admin/dashboard" class="btn btn-danger btn-lg">관리자</a>
         </div>
     </div>
 </div>
