@@ -71,6 +71,21 @@
     WHERE user_id = #{userId}
   </select>
   
+  <select id="findByEmail" parameterType="String" resultType="com.community.community.user.dto.UserResponseDto">
+    SELECT
+        user_id,
+        user_name,
+        user_nick_name,
+        user_phone,
+        user_email,
+        use_yn,
+        role,
+        insert_date,
+        update_date
+    FROM user
+    WHERE user_email = #{userEmail}
+  </select>
+  
   <insert id="addUser" parameterType="com.community.community.user.dto.UserRequestDto">
     INSERT INTO user (
         user_id, 

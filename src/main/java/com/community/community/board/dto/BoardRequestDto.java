@@ -15,6 +15,10 @@ public class BoardRequestDto {
     private String endDate;   // Added for search condition
     private String keyword;   // Added for search condition
     
+    // Sorting fields
+    private String sortField;
+    private String sortOrder;
+    
     // Paging fields
     private int page = 1; // Current page number, default to 1
     private int pageSize = 10; // Items per page, default to 10

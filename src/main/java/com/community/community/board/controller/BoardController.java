@@ -37,12 +37,16 @@ public class BoardController {
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "insertDate", required = false) String sortField,
+            @RequestParam(defaultValue = "desc", required = false) String sortOrder,
             Model model) {
     	BoardRequestDto boardRequestDto = new BoardRequestDto();
     	boardRequestDto.setPage(page);
         boardRequestDto.setStartDate(startDate);
         boardRequestDto.setEndDate(endDate);
         boardRequestDto.setKeyword(keyword);
+        boardRequestDto.setSortField(sortField);
+        boardRequestDto.setSortOrder(sortOrder);
         List<BoardResponseDto> boardList = boardService.findAll(boardRequestDto);
         int totalCount = boardService.getTotalCount(boardRequestDto);
 
@@ -56,6 +60,8 @@ public class BoardController {
         model.addAttribute("startDate", startDate); // Add for Thymeleaf to retain search values
         model.addAttribute("endDate", endDate);     // Add for Thymeleaf to retain search values
         model.addAttribute("keyword", keyword);     // Add for Thymeleaf to retain search values
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortOrder", sortOrder);
         return "board/list";
     }
 

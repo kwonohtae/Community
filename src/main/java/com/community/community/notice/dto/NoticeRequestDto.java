@@ -13,6 +13,11 @@ public class NoticeRequestDto {
     private String startDate; // Added for search condition
     private String endDate;   // Added for search condition
     private String keyword;   // Added for search condition
+    private String useYn;
+
+    // Sorting fields
+    private String sortField;
+    private String sortOrder;
 
     // Paging fields
     private int page = 1; // Current page number, default to 1

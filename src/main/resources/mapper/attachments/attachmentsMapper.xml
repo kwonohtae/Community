@@ -68,4 +68,19 @@
 			attachment_id = #{attachmentId}
 			AND use_yn = 'Y'
 	</select>
+	
+	<select id="findAllByPostId" resultType="com.community.community.attachments.dto.AttachmentsResponseDto">
+		SELECT
+			attachment_id AS attachmentId,
+			notice_id AS noticeId,
+			board_id AS boardId,
+			file_name AS fileName,
+			file_path AS filePath,
+			file_size AS fileSize
+		FROM
+			attachment
+		WHERE
+			notice_id = #{postId}
+			AND use_yn = 'Y'
+	</select>
 </mapper>

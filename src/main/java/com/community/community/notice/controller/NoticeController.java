@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.community.community.attachments.service.AttachmentsService;
 import com.community.community.notice.dto.NoticeRequestDto;
 import com.community.community.notice.dto.NoticeResponseDto;
 import com.community.community.notice.service.NoticeService;
@@ -27,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 public class NoticeController {
 	
     private final NoticeService noticeService;
-    private final AttachmentsService attachmentsService;
 	
     @GetMapping("/list")
     public String noticeList(
@@ -35,6 +33,8 @@ public class NoticeController {
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate,
             @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "insertDate", required = false) String sortField,
+            @RequestParam(defaultValue = "desc", required = false) String sortOrder,
             Model model) {
     	
     	NoticeRequestDto noticeRequestDto = new NoticeRequestDto();
@@ -42,9 +42,10 @@ public class NoticeController {
         noticeRequestDto.setStartDate(startDate);
         noticeRequestDto.setEndDate(endDate);
         noticeRequestDto.setKeyword(keyword);
+        noticeRequestDto.setSortField(sortField);
+        noticeRequestDto.setSortOrder(sortOrder);
     	List<NoticeResponseDto> noticeList = noticeService.findAll(noticeRequestDto);
     	int totalCount = noticeService.getTotalCount(noticeRequestDto);
-
         int totalPages = (int) Math.ceil((double) totalCount / noticeRequestDto.getPageSize());
 
     	log.info("noticeList 진입 데이터 확인 ::::: {}" , noticeRequestDto);
@@ -55,6 +56,8 @@ public class NoticeController {
         model.addAttribute("startDate", startDate); // Add for Thymeleaf to retain search values
         model.addAttribute("endDate", endDate);     // Add for Thymeleaf to retain search values
         model.addAttribute("keyword", keyword);     // Add for Thymeleaf to retain search values
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortOrder", sortOrder);
         return "notice/list";
     }
 
@@ -68,11 +71,6 @@ public class NoticeController {
     	log.info("saveNotice 진입 데이터 확인1 ::::: {}",noticeRequestDto);
     	long noticeId = noticeService.save(noticeRequestDto, attachments);
     	log.info("saveNotice 결과 데이터 확인 ::::: {}", noticeId);
-    	
-    	if(!attachments.get(0).isEmpty()) {
-    		log.info("saveNotice 진입 데이터 확인2 ::::: {}",attachments.get(0).getOriginalFilename());
-    		attachmentsService.saveFiles(attachments, "notice", noticeId, noticeRequestDto.getWriter());
-    	}
         return "redirect:/notice/list";
     }
 

@@ -30,4 +30,11 @@ public interface AttachmentsService {
 	 */
 	AttachmentsResponseDto getAttachmentById(Long attachmentId);
 
+	/**
+	 * 게시물 ID로 모든 첨부파일 조회
+	 * @param postId
+	 * @return
+	 */
+	List<AttachmentsResponseDto> findAllByPostId(Integer postId);
+
 }

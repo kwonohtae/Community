@@ -53,31 +53,43 @@ public class AttachmentsServiceImpl implements AttachmentsService{
             }
 
             try {
+            	log.info("11");
                 String originalName = attachment.getOriginalFilename();
+                log.info("22");
                 String uuid = UUID.randomUUID().toString();
+                log.info("33");
                 String extension = "";
+                log.info("44");
                 if (originalName.contains(".")) {
+                	log.info("55");
                 	extension = originalName.substring(originalName.lastIndexOf("."));
+                	log.info("66");
                 }
                 String savedName = uuid + extension;
+                log.info("77");
                 long fileSize = attachment.getSize();
+                log.info("88");
 
                 File target = new File(dir, savedName);
+                log.info("99");
                 attachment.transferTo(target);
-
+                log.info("00");
                 AttachmentsRequestDto fileDto = new AttachmentsRequestDto();
+                log.info("111");
                 if("notice".equals(boardType)) {
                 	fileDto.setNoticeId(refId);
                 } else if("board".equals(boardType)) {
                 	fileDto.setBoardId(refId);
                 }
                 fileDto.setFileName(originalName);
+                log.info("222");
                 fileDto.setFilePath(path + File.separator + savedName);
                 fileDto.setFileSize(fileSize);
                 fileDto.setInsertUser(writer); // writer 파라미터 사용
                 
+                log.info("333");
                 attachmentsMapper.save(fileDto);
-
+                log.info("444");
             } catch (IOException e) {
                 log.error("file save error", e);
                 throw new RuntimeException("File saving failed.", e);
@@ -93,5 +105,10 @@ public class AttachmentsServiceImpl implements AttachmentsService{
 	@Override
 	public AttachmentsResponseDto getAttachmentById(Long attachmentId) {
 		return attachmentsMapper.findById(attachmentId);
+	}
+
+	@Override
+	public List<AttachmentsResponseDto> findAllByPostId(Integer postId) {
+		return attachmentsMapper.findAllByPostId(postId);
 	}
 }

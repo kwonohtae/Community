@@ -17,6 +17,8 @@
                 </div>
                 <div class="card-body">
                     <form id="searchForm" th:action="@{/board/list}" method="get">
+                        <input type="hidden" name="sortField" th:value="${sortField}" />
+                        <input type="hidden" name="sortOrder" th:value="${sortOrder}" />
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="startDate" class="form-label">시작일</label>
@@ -42,10 +44,10 @@
                 <thead class="thead-dark">
                     <tr>
                         <th>번호</th>
-                        <th>제목</th>
-                        <th>작성자</th>
-                        <th>조회수</th>
-                        <th>작성일</th>
+                        <th><a th:href="@{/board/list(page=${currentPage}, sortField='title', sortOrder=${sortField == 'title' and sortOrder == 'asc' ? 'desc' : 'asc'}, startDate=${startDate}, endDate=${endDate}, keyword=${keyword})}">제목</a></th>
+                        <th><a th:href="@{/board/list(page=${currentPage}, sortField='writer', sortOrder=${sortField == 'writer' and sortOrder == 'asc' ? 'desc' : 'asc'}, startDate=${startDate}, endDate=${endDate}, keyword=${keyword})}">작성자</a></th>
+                        <th><a th:href="@{/board/list(page=${currentPage}, sortField='views', sortOrder=${sortField == 'views' and sortOrder == 'asc' ? 'desc' : 'asc'}, startDate=${startDate}, endDate=${endDate}, keyword=${keyword})}">조회수</a></th>
+                        <th><a th:href="@{/board/list(page=${currentPage}, sortField='insertDate', sortOrder=${sortField == 'insertDate' and sortOrder == 'asc' ? 'desc' : 'asc'}, startDate=${startDate}, endDate=${endDate}, keyword=${keyword})}">작성일</a></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,15 +68,15 @@
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                        <a class="page-link" th:href="@{''(page=${currentPage - 1})}" aria-label="Previous">
+                        <a class="page-link" th:href="@{/board/list(page=${currentPage - 1}, sortField=${sortField}, sortOrder=${sortOrder}, startDate=${startDate}, endDate=${endDate}, keyword=${keyword})}" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
                     <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:classappend="${i == currentPage} ? 'active'">
-                        <a class="page-link" th:href="@{''(page=${i})}" th:text="${i}"></a>
+                        <a class="page-link" th:href="@{/board/list(page=${i}, sortField=${sortField}, sortOrder=${sortOrder}, startDate=${startDate}, endDate=${endDate}, keyword=${keyword})}" th:text="${i}"></a>
                     </li>
                     <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
-                        <a class="page-link" th:href="@{''(page=${currentPage + 1})}" aria-label="Next">
+                        <a class="page-link" th:href="@{/board/list(page=${currentPage + 1}, sortField=${sortField}, sortOrder=${sortOrder}, startDate=${startDate}, endDate=${endDate}, keyword=${keyword})}" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>

@@ -47,7 +47,15 @@
   	<if test="endDate != null and endDate != ''">
   		AND insert_date &lt;= CONCAT(#{endDate}, ' 23:59:59')
   	</if>
-  	ORDER BY insert_date DESC
+  	ORDER BY 
+        <choose>
+            <when test="sortField == 'title'">title</when>
+            <when test="sortField == 'writer'">writer</when>
+            <when test="sortField == 'views'">views</when>
+            <otherwise>insert_date</otherwise>
+        </choose>
+        <if test="sortOrder == 'asc'">ASC</if>
+        <if test="sortOrder == 'desc'">DESC</if>
   	LIMIT #{pageSize} OFFSET #{offset}
   </select>
 

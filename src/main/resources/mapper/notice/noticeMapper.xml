@@ -30,7 +30,15 @@
   	<if test="endDate != null and endDate != ''">
   		AND insert_date &lt;= CONCAT(#{endDate}, ' 23:59:59')
   	</if>
-  	ORDER BY insert_date DESC
+  	ORDER BY 
+        <choose>
+            <when test="sortField == 'title'">title</when>
+            <when test="sortField == 'writer'">writer</when>
+            <when test="sortField == 'views'">views</when>
+            <otherwise>insert_date</otherwise>
+        </choose>
+        <if test="sortOrder == 'asc'">ASC</if>
+        <if test="sortOrder == 'desc'">DESC</if>
   	LIMIT #{pageSize} OFFSET #{offset}
   </select>
 
@@ -103,6 +111,40 @@
   	set views = views + 1
   	where notice_id = #{noticeId}
   </update>
+  
+  <update id="updateNoticeStatus" parameterType="com.community.community.notice.dto.NoticeRequestDto">
+  	UPDATE notice
+  	SET
+  		use_yn = #{useYn}
+  	WHERE notice_id = #{noticeId}
+  </update>
+  
+  <update id="updateNotice" parameterType="com.community.community.notice.dto.NoticeRequestDto">
+  	UPDATE notice
+  	SET
+  		title = #{title},
+  		detail = #{content}
+  	WHERE notice_id = #{noticeId}
+  </update>
+  
+  <select id="findByIdForAdmin" parameterType="Long" resultType="com.community.community.notice.dto.NoticeResponseDto">
+  	/* 상세로 들어가기 윈한 Notice 조회 (관리자용, useYn 무시) */
+  	SELECT
+  		notice_id,
+  		community_id,
+  		user_id,
+  		title,
+  		writer,
+  		detail,
+  		views,
+  		use_yn,
+  		insert_user,
+  		insert_date,
+  		update_user,
+  		update_date
+  	FROM notice
+  	WHERE notice_id = #{noticeId}
+  </select>
   
   
 </mapper>

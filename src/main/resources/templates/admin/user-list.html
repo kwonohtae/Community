@@ -104,50 +104,63 @@
 						<div class="mb-3">
 							<label for="addUserId" class="form-label">아이디</label> 
 							<div class="input-group">
-								<input type="text" class="form-control" id="addUserId" name="userId" placeholder="4자 이상 영문, 숫자" required>
-								<div class="input-group-append">
-	                        		<button class="btn btn-outline-secondary" type="button" id="idCheckButton">중복 확인</button>
-	                    		</div>
+								<input type="text" class="form-control" id="addUserId" name="userId" placeholder="8자 이상 입력" required>
+	                        	<button class="btn btn-outline-secondary" type="button" id="idCheckButton">중복 확인</button>
                     		</div>
+                    			<div id="idValidationMessage" class="validation-message"></div>
 						</div>
 						<div class="mb-3">
-							<label for="addUserPassword" class="form-label">비밀번호</label> <input
-								type="password" class="form-control" id="addUserPassword"
-								name="password" required>
+								<label for="addUserPassword" class="form-label">비밀번호</label> 
+							<div class="input-group">
+								<input type="password" class="form-control" id="addUserPassword" name="password" required>
+							</div>
+							<div id="passwordValidationMessage" class="validation-message"></div>
 						</div>
 						<div class="mb-3">
-							<label for="addUserName" class="form-label">이름</label> <input
-								type="text" class="form-control" id="addUserName"
-								name="userName" required>
+								<label for="passwordConfirm">비밀번호 확인</label>
+							<div class="input-group">
+								<input type="password" class="form-control" id="addUserPasswordConfirm" name="passwordConfirm" placeholder="비밀번호를 다시 입력하세요" required>
+							</div>
+							<div id="passwordConfirmValidationMessage" class="validation-message"></div>
 						</div>
+						
 						<div class="mb-3">
-							<label for="addUserNickName" class="form-label">닉네임</label> <input
-								type="text" class="form-control" id="addUserNickName"
-								name="userNickName">
+							<label for="addUserName" class="form-label">이름</label> 
+							<input type="text" class="form-control" id="addUserName" name="userName" required>
 						</div>
+	
 						<div class="mb-3">
-							<label for="addUserEmail" class="form-label">이메일</label> <input
-								type="email" class="form-control" id="addUserEmail"
-								name="userEmail" required>
+							<label for="addUserNickName" class="form-label">닉네임</label> 
+							<input type="text" class="form-control" id="addUserNickName" name="userNickName" required>
 						</div>
+	
 						<div class="mb-3">
-							<label for="addUserPhone" class="form-label">연락처</label> <input
-								type="tel" class="form-control" id="addUserPhone"
-								name="userPhone">
+							<label for="addUserEmail" class="form-label">이메일</label>
+							<div class="input-group">
+								<input type="email" class="form-control" id="addUserEmail" name="userEmail" placeholder="예: user@example.com" required>
+			                    <button class="btn btn-outline-secondary" type="button" id="emailCheckButton">중복 확인</button>
+							</div>
+			                    <div id="emailValidationMessage" class="validation-message"></div>
 						</div>
+						
 						<div class="mb-3">
-							<label for="addRole" class="form-label">권한</label> <select
-								class="form-select" id="addRole" name="role">
-								<option value="USER" selected>USER</option>
+							<label for="addRole" class="form-label">권한</label> 
+							<select class="form-select" id="addRole" name="role">
+								<option value="" selected>권한을 선택하세요.</option>
+								<option value="USER">USER</option>
 								<option value="ADMIN">ADMIN</option>
 							</select>
 						</div>
+						
+						<div class="mb-3">
+							<label for="addUserPhone" class="form-label">연락처</label> 
+							<input type="text" class="form-control" id="addUserPhone" placeholder="01*-****-****" name="userPhone" required>
+						</div>
+						
 					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
-						data-bs-dismiss="modal">닫기</button>
-					<button type="button" class="btn btn-primary" id="saveNewUserBtn">저장</button>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" id="saveNewUserBtn">등록</button>
+						</div>
 				</div>
 			</div>
 		</div>
@@ -161,35 +174,30 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="userEditModalLabel">사용자 정보 수정</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
 					<form id="userEditForm">
 						<input type="hidden" id="editUserId" name="userId">
 						<div class="form-group mb-3">
-							<label for="editUserName" class="form-label">이름</label> <input
-								type="text" class="form-control" id="editUserName"
-								name="userName" required>
+							<label for="editUserName" class="form-label">이름</label> 
+							<input type="text" class="form-control" id="editUserName" name="userName" required>
 						</div>
 						<div class="mb-3">
-							<label for="editUserNickName" class="form-label">닉네임</label> <input
-								type="text" class="form-control" id="editUserNickName"
-								name="userNickName" required>
+							<label for="editUserNickName" class="form-label">닉네임</label> 
+							<input type="text" class="form-control" id="editUserNickName" name="userNickName" required>
 						</div>
 						<div class="mb-3">
-							<label for="editUserEmail" class="form-label">이메일</label> <input
-								type="email" class="form-control" id="editUserEmail"
-								name="userEmail" required>
+							<label for="editUserEmail" class="form-label">이메일</label> 
+							<input type="email" class="form-control" id="editUserEmail" name="userEmail" required>
 						</div>
 						<div class="mb-3">
-							<label for="editUserPhone" class="form-label">연락처</label> <input
-								type="tel" class="form-control" id="editUserPhone"
-								name="userPhone" required>
+							<label for="editUserPhone" class="form-label">연락처</label>
+							<input type="tel" class="form-control" id="editUserPhone" placeholder="01*-****-****" name="userPhone" required>
 						</div>
 						<div class="mb-3">
-							<label for="editRole" class="form-label">권한</label> <select
-								class="form-select" id="editRole" name="role">
+							<label for="editRole" class="form-label">권한</label> 
+							<select	class="form-select" id="editRole" name="role">
 								<option value="USER">USER</option>
 								<option value="ADMIN">ADMIN</option>
 							</select>
@@ -211,40 +219,348 @@
 
 <script>
 
-	document.addEventListener("DOMContentLoaded", function(){
-		const saveChangesBtn = document.getElementById('saveUserChangesBtn');
-        if(saveChangesBtn) {
-            saveChangesBtn.addEventListener('click', saveUserChanges);
-        };
+
+const saveNewUserBtn = document.getElementById('saveNewUserBtn');
+
+
+//--- 나머지 필드 유효성 검사 (keyup) ---
+const addKeyUpValidation = (field, conditionFn, validationMessageElement) => {
+    field.input.addEventListener('keyup', () => {
+        const isValid = conditionFn();
+        field.isValid = isValid;
+        field.input.classList.toggle('is-valid', isValid);
+        field.input.classList.toggle('is-invalid', !isValid);
+        if (validationMessageElement) {
+           validationMessageElement.style.display = isValid ? 'none' : 'block';
+        }
         
-       
-        
-		/* const checkIdbtn = document.getElementById("idCheckButton"); 
-		if (checkIdbtn) {
-			checkIdbtn.addEventListener ('click', userIdCheck);
-		} */
-		
-	});
+        if(field == userAddFields.password){
+        	if(userAddFields.password.isValid){
+            	setValidationStatus(userAddFields.password, true, "유효한 비밀번호 입니다.")
+            }else if(!userAddFields.password.isValid) {
+            	setValidationStatus(userAddFields.password, false, "비밀번호가 유효하지 않습니다.")
+           	}
+        }else if(field == userAddFields.passwordConfirm){
+        	if(userAddFields.passwordConfirm.isValid){
+            	setValidationStatus(userAddFields.passwordConfirm, true, "비밀번호가 일치 합니다.")
+            }else{
+            	setValidationStatus(userAddFields.passwordConfirm, false, "비밀번호가 일치 하지 않습니다.")
+            }
+        }
+        validateForm();
+    });
+};
+
+
+
+async function communityAddUser (){
+	const formData = {
+			userId : userAddFields.userId.input.value,
+			userEmail : userAddFields.userEmail.input.value,
+			password : userAddFields.password.input.value,
+			userName : userAddFields.userName.input.value,
+			userNickName : userAddFields.userNickName.input.value,
+			userPhone : userAddFields.userPhone.input.value,
+			role : userAddFields.userRole.select.value
+			} 
 	
+	console.log("데이터 확인 :::: " + JSON.stringify(formData));
+	try {
+		const response = await fetch('/admin/users/add', {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify(formData)
+		});
+		
+		if(!response.ok){
+			throw new Error('Network response was not ok');
+		}
+		
+		const result = await response.json();
+		if(result.success){
+			showAlert('성공적으로 등록되었습니다.', 'success');
+            setTimeout(() => { window.location.reload(); }, 1500);
+		}else{
+			showAlert('등록이 실패 하였습니다. 잠시 후 다시 시도 바랍니다.', 'danger');
+		}
+	} catch (error) {
+        console.error('Error deleting user:', error);
+        showAlert('알수 없는 이유로 등록이 실패 하였습니다. 잠시 후 다시 시도 바랍니다.', 'danger');
+    }
+};
+
+	//신규 회원 가입 모달 팝업 셋팅
 	function openAddUserModal (){
 		console.log("신규 회원 가입 안내 modal 오픈")
 		const modalElementAddUser = document.getElementById('userAddModal');
 		if (modalElementAddUser) {
-			document.getElementById('userAddForm').reset(); // 폼 초기화
+			const userAddForm = document.getElementById('userAddForm');
+			userAddForm.reset(); // 폼 초기화
+			classListReset(userAddForm); // class와 msg 초기화
 			const userAddModal = new bootstrap.Modal(modalElementAddUser);
 			userAddModal.show();
 		}
 	};
 	
+	//신규 회원 가입 모달 초기화
+	function classListReset(field){
+		validateForm();
+		const allInputFields = userAddForm.querySelectorAll('input, select');
+        // 선택된 각 필드를 순회하면서 클래스를 제거합니다.
+        allInputFields.forEach(field => {
+            field.classList.remove('is-invalid', 'is-valid');
+        });
+        
+        userAddFields.userId.msg.classList.remove('text-danger', 'text-success')
+        userAddFields.userId.msg.textContent='';
+        
+        userAddFields.userEmail.msg.classList.remove('text-danger', 'text-success')
+        userAddFields.userEmail.msg.textContent='';
+        
+        userAddFields.password.msg.classList.remove('text-danger', 'text-success')
+        userAddFields.password.msg.textContent='';
+        
+        userAddFields.passwordConfirm.msg.classList.remove('text-danger', 'text-success')
+        userAddFields.passwordConfirm.msg.textContent='';
+	};
+	
+	document.addEventListener("DOMContentLoaded", function(){
+		
+		
+		const saveChangesBtn = document.getElementById('saveUserChangesBtn');
+	    if(saveChangesBtn) {
+	        saveChangesBtn.addEventListener('click', saveUserChanges);
+	    };
+	    
+	    const idCheckbtn = document.getElementById('idCheckButton');
+	    if (idCheckbtn) {
+	    	idCheckbtn.addEventListener('click', idCheck);
+	    }
+	    
+	    const emailCheckbtn = document.getElementById('emailCheckButton');
+	    if (emailCheckbtn) {
+	    	emailCheckbtn.addEventListener('click', emailCheck);
+	    }
+	    
+	    const addUser = document.getElementById('saveNewUserBtn');
+	    if (addUser) {
+	    	addUser.addEventListener('click', communityAddUser)
+	    }
+	});
+	
+	const userAddFields = {
+			userId: { input: document.getElementById('addUserId'), btn: document.getElementById('idCheckButton'), msg: document.getElementById('idValidationMessage'), isChecked: false },
+	        userEmail: { input: document.getElementById('addUserEmail'), btn: document.getElementById('emailCheckButton'), msg: document.getElementById('emailValidationMessage'), isChecked: false },
+	        password: { input: document.getElementById('addUserPassword'), msg: document.getElementById('passwordValidationMessage'), isValid: false },
+	        passwordConfirm: { input: document.getElementById('addUserPasswordConfirm'), msg: document.getElementById('passwordConfirmValidationMessage'), isValid: false },
+	        userName: { input: document.getElementById('addUserName'), isValid: false },
+	        userNickName: {input: document.getElementById('addUserNickName'), isValid: false},
+	        userPhone: { input: document.getElementById('addUserPhone'), isValid: false },
+	        userRole: { select: document.getElementById('addRole'), isValid: false }
+	};
+
+	// 신규 회원 등록 시 ID 체크 로직
+	async function idCheck(){
+		console.log("신규 회원의 ID 체크 로직")
+		const userId = userAddFields.userId.input.value;
+		if (userId == null || userId == '') {
+			setValidationStatus(userAddFields.userId, false, '아이디를 입력 해주세요.');
+			return
+		}
+		try {
+			const response = await fetch('/admin/users/idCheck', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: userId
+			});
+			
+			if(!response.ok){
+				throw new Error('Network response was not ok');
+			}
+			
+			const result = await response.json();
+			if(result.success){
+				setValidationStatus(userAddFields.userId, true, '사용이 가능한 아이디입니다.');
+			}else{
+				setValidationStatus(userAddFields.userId, false, '사용이 불가능한 아이디입니다.');
+			}
+		} catch (error) {
+            console.error('Error deleting user:', error);
+            setValidationStatus(userAddFields.userId, false, '사용자 ID 확인 중 오류가 발생했습니다. 다시 시도 바랍니다.');
+        }
+	};
+	
+	// 신규 회원 등록 시 Email 체크 로직
+	async function emailCheck(){
+		console.log("신규 회원의 Email 체크 로직")
+		const userEmail = userAddFields.userEmail.input.value;
+		if (userEmail == null || userEmail == '') {
+			setValidationStatus(userAddFields.userEmail, false, 'Email을 입력해주세요.');
+			return
+		}
+		try {
+			const response = await fetch('/admin/users/emailCheck', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: userEmail
+			});
+			
+			if(!response.ok){
+				throw new Error('Network response was not ok');
+			}
+			
+			const result = await response.json();
+			if(result.success){
+				setValidationStatus(userAddFields.userEmail, true, '사용이 가능한 Email입니다.');
+			}else{
+				setValidationStatus(userAddFields.userEmail, false, '사용이 불가능한 Email입니다.');
+			}
+		} catch (error) {
+            console.error('Error deleting user:', error);
+            setValidationStatus(userAddFields.userEmail, false, '사용자 Email 확인 중 오류가 발생했습니다. 다시 시도 바랍니다.');
+        }
+	};
+	
+	// validation setting 함수
+	function setValidationStatus(field, isSuccess, message) {
+        field.input.classList.remove('is-invalid', 'is-valid');
+        field.msg.classList.remove('text-danger', 'text-success');
+        
+        if (isSuccess) {
+            field.input.classList.add('is-valid');
+            field.msg.classList.add('text-success');
+        } else {
+            field.input.classList.add('is-invalid');
+            field.msg.classList.add('text-danger');
+        }
+        field.msg.textContent = message;
+        field.msg.style.display = 'block';
+    };
+
+	addKeyUpValidation(userAddFields.password, 
+		() => /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[a-zA-Z\d!@#$%^&*()_+]{8,}$/.test(userAddFields.password.input.value),
+		userAddFields.password.input.nextElementSibling
+	);
+	
+    addKeyUpValidation(userAddFields.passwordConfirm, 
+    	() => userAddFields.password.input.value === userAddFields.passwordConfirm.input.value && userAddFields.passwordConfirm.input.value !== '',
+    	userAddFields.passwordConfirm.input.nextElementSibling
+   	);
+    
+   	addKeyUpValidation(userAddFields.userName, 
+   		() => userAddFields.userName.input.value.trim() !== '',
+   		userAddFields.userName.input.nextElementSibling
+   	);
+   	
+   	addKeyUpValidation(userAddFields.userNickName, 
+   		() => userAddFields.userNickName.input.value.trim() !== '',
+   		userAddFields.userNickName.input.nextElementSibling
+   	);
+   	
+   	addKeyUpValidation(userAddFields.userPhone, 
+   		() => /^01[0-9]-\d{4}-\d{4}$/.test(userAddFields.userPhone.input.value),
+   		userAddFields.userPhone.input.nextElementSibling
+	);
+
+ 	// 신규 회원 가입 등록 버튼 활성화
+    function validateForm() {
+        const otherFieldsValid = userAddFields.password.isValid && userAddFields.passwordConfirm.isValid && userAddFields.userName.isValid && userAddFields.userNickName.isValid && userAddFields.userPhone.isValid;
+        if(otherFieldsValid && userAddFields.userRole.select.value.length > 0){
+        	saveNewUserBtn.disabled = false;
+        }else{
+        	saveNewUserBtn.disabled = true;
+        }
+        console.log("확인!!")
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// 기존 회원 정보 모달 팝업 셋팅
 	function openEditUserModal(button){
 		console.log("기존 회원 수정 안내 modal 오픈")
+		document.getElementById('userEditForm').reset();
 		document.getElementById('editUserId').value = button.getAttribute('data-user-id');
 		document.getElementById('editUserName').value = button.getAttribute('data-user-name');
 		document.getElementById('editUserNickName').value = button.getAttribute('data-user-nick-name');
 		document.getElementById('editUserEmail').value = button.getAttribute('data-user-email');
 		document.getElementById('editUserPhone').value = button.getAttribute('data-user-phone');
-		const role = button.getAttribute('data-user-role');
-		document.getElementById('editRole').value = role;
+		document.getElementById('editRole').value = button.getAttribute('data-user-role');
 		const modalElementEditUser = document.getElementById('userEditModal');
 		if (modalElementEditUser) {
 			const constuserEditModal = new bootstrap.Modal(modalElementEditUser);
@@ -252,7 +568,7 @@
 		}
 	};
 	
-	// 모달 팝업 내에서 수정한 고객 정보 데이터 전송
+	// 모달 팝업 내에서 수정한 고객 정보 데이터 전송 함수
 	async function saveUserChanges() {
         const form = document.getElementById('userEditForm');
         const formData = new FormData(form);
@@ -326,9 +642,9 @@
         return emailRegex.test(email);
     }
 
-    // 전화번호 유효성 검사 함수 (하이픈 없이 숫자만 10~11자리)
+    // 전화번호 유효성 검사 함수 (숫자 3자리 - 4자리 - 4자리 형태)
     function isValidPhone(phone) {
-        const phoneRegex = /^\d{10,11}$/;
+    	const phoneRegex = /^01[0-9]-\d{4}-\d{4}$/;
         return phoneRegex.test(phone);
     }
     
@@ -341,6 +657,7 @@
     	}
     }
     
+    // 비활성/활성 상태 변경에 대한 함수
     function confirmDeleteUser(button, useYn) {
         const userId = button.getAttribute('data-user-id');
         showConfirm(`사용자 ID: ${userId}의 상태를 변경하시겠습니까?`, async () => {
@@ -372,12 +689,6 @@
             }
         });
     }
-	
-	/* function userIdCheck (){
-		const userId = document.getElementById("addUserId").value;
-		console.log("아이디 확인 : " + userId);
-	} */
-	
-	
-
+    
+ 
 </script>

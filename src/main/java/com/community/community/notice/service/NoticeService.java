@@ -14,4 +14,8 @@ public interface NoticeService {
 	NoticeResponseDto findByNoticeId(Long noticeId);
 	long save(NoticeRequestDto noticeRequestDto, List<MultipartFile> files);
 	int updateView(Long noticeId);
+	void updateNoticeStatus(NoticeRequestDto noticeRequestDto);
+	void updateNotice(NoticeRequestDto noticeRequestDto);
+	NoticeResponseDto findByIdForAdmin(Long noticeId);
+	
 }

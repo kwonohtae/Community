@@ -14,4 +14,7 @@ public interface NoticeMapper {
 	NoticeResponseDto findByNoticeId(Long noticeId);
 	int save(NoticeRequestDto noticeRequestDto);
 	int updateView(Long noticeId);
+	void updateNoticeStatus(NoticeRequestDto noticeRequestDto);
+	void updateNotice(NoticeRequestDto noticeRequestDto);
+	NoticeResponseDto findByIdForAdmin(Long noticeId);
 }

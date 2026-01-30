@@ -12,4 +12,5 @@ public interface UserService {
     int updateUser(UserRequestDto userRequestDto);
     int addUser(UserRequestDto userRequestDto);
     UserResponseDto findById(String userId);
+    UserResponseDto findByEmail(String userEmail);
 }

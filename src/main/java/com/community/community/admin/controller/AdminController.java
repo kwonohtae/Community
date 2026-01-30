@@ -1,6 +1,8 @@
 package com.community.community.admin.controller;
 
 import com.community.community.admin.dto.AdminResponse;
+import com.community.community.attachments.dto.AttachmentsResponseDto;
+import com.community.community.attachments.service.AttachmentsService;
 import com.community.community.board.dto.BoardRequestDto;
 import com.community.community.board.dto.BoardResponseDto;
 import com.community.community.board.service.BoardService;
@@ -18,10 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -34,6 +38,7 @@ public class AdminController {
     private final BoardService boardService;
     private final NoticeService noticeService;
     private final UserService userService;
+    private final AttachmentsService attachmentsService;
 
     @GetMapping("/dashboard")
     public String adminDashboard() {
@@ -91,23 +96,47 @@ public class AdminController {
     @PostMapping("/users/add")
     public ResponseEntity<?> addUser(@RequestBody UserRequestDto userRequestDto) {
         log.info("addUser 진입 데이터 확인 ::::: {}", userRequestDto);
-        try {
-            // ID 중복 검사
-            if (userService.findById(userRequestDto.getUserId()) != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(new AdminResponse(false, "이미 사용 중인 아이디입니다."));
-            }
-            
-            int result = userService.addUser(userRequestDto);
-            if (result > 0) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(new AdminResponse(true, "신규 사용자가 성공적으로 등록되었습니다."));
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new AdminResponse(false, "신규 사용자 등록에 실패했습니다."));
-            }
-        } catch (Exception e) {
-            log.error("신규 사용자 등록 중 오류 발생: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new AdminResponse(false, "신규 사용자 등록 중 오류가 발생했습니다."));
-        }
-    }
+	    try { 
+	    	int result = userService.addUser(userRequestDto); 
+	    	if (result > 0) {
+	    		return ResponseEntity.status(HttpStatus.OK).body(new AdminResponse(true, "신규 사용자가 성공적으로 등록되었습니다.")); 
+	    	} else {
+	    		return ResponseEntity.status(HttpStatus.OK).body(new AdminResponse(false, "신규 사용자 등록에 실패했습니다.")); 
+	    	} 
+	    } catch (Exception e) {
+	    	log.error("신규 사용자 등록 중 오류 발생: {}", e.getMessage()); 
+	    	return ResponseEntity.status(HttpStatus.CONFLICT).body(new AdminResponse(false, "신규 사용자 등록 중 오류가 발생했습니다. 잠시 후에 다시 시도 바랍니다."));
+	    }
+    };
+    
+    @PostMapping("/users/idCheck")
+    public ResponseEntity<?> userIdCheck(@RequestBody String userId){
+    	log.info("userIdCheck 진입 내역 확인 ::::: {}" , userId);
+    	try {
+    		if (userService.findById(userId) != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new AdminResponse(false, "이미 사용 중인 아이디입니다."));
+            }else{
+            	return ResponseEntity.status(HttpStatus.OK).body(new AdminResponse(true, "사용 가능한 아이디입니다."));
+            }	
+    	}catch (Exception e) {
+    		return ResponseEntity.status(HttpStatus.CONFLICT).body(new AdminResponse(false, "사용자 ID 확인 중 오류가 발생했습니다. 다시 시도 바랍니다."));
+    	}
+    };
+    
+    @PostMapping("/users/emailCheck")
+    public ResponseEntity<?> userEmailCheck(@RequestBody String userEmail){
+    	log.info("userEmailCheck 진입 내역 확인 ::::: {}" , userEmail);
+    	try {
+    		if (userService.findByEmail(userEmail) != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new AdminResponse(false, "이미 사용 중인 Email입니다."));
+//                return ResponseEntity.status(HttpStatus.CONFLICT).body(new AdminResponse(false, "이미 사용 중인 Email입니다."));
+            }else {
+            	return ResponseEntity.status(HttpStatus.OK).body(new AdminResponse(true, "사용 가능한 Email입니다."));
+            }	
+    	}catch(Exception e) {
+    		return ResponseEntity.status(HttpStatus.CONFLICT).body(new AdminResponse(false, "사용자 Email 확인 중 오류가 발생했습니다. 다시 시도 바랍니다."));
+    	}
+    };
 
     @GetMapping("/boards")
     public String boardManagement(@RequestParam(defaultValue = "1") int page, Model model) {
@@ -139,6 +168,48 @@ public class AdminController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("pageSize", noticeRequestDto.getPageSize());
         return "admin/notice-list";
+    }
+    
+    @ResponseBody
+    @PostMapping("/notices/update-status")
+    public ResponseEntity<AdminResponse> updateNoticeStatus(@RequestBody NoticeRequestDto noticeRequestDto) {
+        try {
+            noticeService.updateNoticeStatus(noticeRequestDto);
+            return ResponseEntity.ok(new AdminResponse(true, "상태가 성공적으로 변경되었습니다."));
+        } catch (Exception e) {
+            log.error("Error updating notice status: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new AdminResponse(false, "상태 변경 중 오류가 발생했습니다."));
+        }
+    }
+
+    @ResponseBody
+    @GetMapping("/notices/{noticeId}")
+    public ResponseEntity<NoticeResponseDto> getNoticeDetails(@PathVariable Long noticeId) {
+    	log.info("getNoticeDetails 진입 내역 확인 :::: {}", noticeId);
+    	
+        try {
+            NoticeResponseDto notice = noticeService.findByIdForAdmin(noticeId);
+            List<AttachmentsResponseDto> attachments = attachmentsService.findAllByPostId(notice.getNoticeId());
+            notice.setAttachments(attachments);
+            return ResponseEntity.ok(notice);
+        } catch (Exception e) {
+            log.error("Error fetching notice details: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @ResponseBody
+    @PostMapping("/notices/update")
+    public ResponseEntity<AdminResponse> updateNotice(@RequestBody NoticeRequestDto noticeRequestDto) {
+        try {
+            noticeService.updateNotice(noticeRequestDto);
+            return ResponseEntity.ok(new AdminResponse(true, "공지사항이 성공적으로 수정되었습니다."));
+        } catch (Exception e) {
+            log.error("Error updating notice: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new AdminResponse(false, "공지사항 수정 중 오류가 발생했습니다."));
+        }
     }
 
     @GetMapping("/stats")

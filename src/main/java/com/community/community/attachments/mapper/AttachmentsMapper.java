@@ -15,4 +15,6 @@ public interface AttachmentsMapper {
 	
 	AttachmentsResponseDto findById(Long attachmentId); // 첨부파일 단건 조회 추가
 
+	List<AttachmentsResponseDto> findAllByPostId(Integer postId);
+
 }

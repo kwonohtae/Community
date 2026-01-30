@@ -26,13 +26,22 @@
                 <tr th:each="notice, stat : ${noticeList}">
                     <td th:text="${stat.count}"></td>
                     <td>
-                        <a th:href="@{/notice/{id}(id=${notice.noticeId})}" th:text="${notice.title}"></a>
+                        <a href="javascript:void(0);" th:text="${notice.title}" th:onclick="openNoticeDetailModal([[${notice.noticeId}]])"></a>
                     </td>
                     <td th:text="${notice.writer}"></td>
                     <td th:text="${#temporals.format(notice.insertDate != null ? notice.insertDate : null, 'yyyy-MM-dd HH:mm')}"></td>
                     <td>
-                        <button class="btn btn-sm btn-info">수정</button>
-                        <button class="btn btn-sm btn-danger">삭제</button>
+                        <button class="btn btn-sm btn-info"
+                                th:attr="data-notice-id=${notice.noticeId}"
+                                onclick="openNoticeDetailModal(this)">수정</button>
+                        <button class="btn btn-sm btn-danger"
+                                th:if="${notice.useYn == 'Y'}"
+                                th:attr="data-notice-id=${notice.noticeId}"
+                                onclick="confirmToggleNoticeStatus(this, 'N')">비활성화</button>
+                        <button class="btn btn-sm btn-success"
+                                th:if="${notice.useYn == 'N'}"
+                                th:attr="data-notice-id=${notice.noticeId}"
+                                onclick="confirmToggleNoticeStatus(this, 'Y')">활성화</button>
                     </td>
                 </tr>
             </tbody>
@@ -62,3 +71,173 @@
         </div>
     </th:block>
 </html>
+
+<!-- Notice Detail/Edit Modal -->
+<div class="modal fade" id="noticeDetailModal" tabindex="-1" aria-labelledby="noticeDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="noticeDetailModalLabel">공지사항 상세 정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="noticeEditForm">
+                    <input type="hidden" id="editNoticeId" name="noticeId">
+                    <div class="mb-3">
+                        <label for="editTitle" class="form-label">제목</label>
+                        <input type="text" class="form-control" id="editTitle" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editContent" class="form-label">내용</label>
+                        <textarea class="form-control" id="editContent" name="detail" rows="10" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">첨부 파일</label>
+                        <ul id="attachmentsList" class="list-group">
+                            <!-- Attachments will be dynamically inserted here -->
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" id="saveNoticeChangesBtn">저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Notice status toggle function (Activate/Deactivate)
+    function confirmToggleNoticeStatus(button, useYn) {
+        const noticeId = button.getAttribute('data-notice-id');
+        const actionText = useYn === 'Y' ? '활성화' : '비활성화';
+
+        showConfirm(`공지 ID: ${noticeId}를 ${actionText} 하시겠습니까?`, async () => {
+            try {
+                const response = await fetch('/admin/notices/update-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ noticeId: noticeId, useYn: useYn })
+                });
+
+                if (!response.ok) {
+                    throw new Error('상태 변경에 실패했습니다.');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    showAlert('상태가 성공적으로 변경되었습니다.', 'success');
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showAlert(result.message || '상태 변경에 실패했습니다.', 'danger');
+                }
+            } catch (error) {
+                console.error('Error updating notice status:', error);
+                showAlert(error.message, 'danger');
+            }
+        });
+    }
+
+    // Function to open and populate the notice detail modal
+    async function openNoticeDetailModal(param) {
+        let noticeId;
+        if (typeof param === 'object' && param.getAttribute) { // If 'this' (button element) is passed
+            noticeId = param.getAttribute('data-notice-id');
+        } else { // If noticeId is passed directly
+            noticeId = param;
+        }
+
+        try {
+            // Fetch notice details including attachments
+            const response = await fetch(`/admin/notices/${noticeId}`);
+            if (!response.ok) {
+                throw new Error('공지사항 정보를 불러오는 데 실패했습니다.');
+            }
+            const notice = await response.json();
+
+            // Populate the modal fields
+            document.getElementById('editNoticeId').value = notice.noticeId;
+            document.getElementById('editTitle').value = notice.title;
+            document.getElementById('editContent').value = notice.detail;
+
+            // Populate the attachments list
+            const attachmentsList = document.getElementById('attachmentsList');
+            attachmentsList.innerHTML = ''; // Clear previous list
+            
+            console.log("확인 :::: "+JSON.stringify(notice.attachments));
+            
+            if (notice.attachments && notice.attachments.length > 0) {
+                notice.attachments.forEach(file => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    
+                    const link = document.createElement('a');
+                    link.href = `/attachments/download/${file.attachmentId}`; // Assumes a download endpoint
+                    link.textContent = file.fileName;
+                    
+                    li.appendChild(link);
+                    attachmentsList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = '첨부파일이 없습니다.';
+                attachmentsList.appendChild(li);
+            }
+
+            // Show the modal
+            const noticeModal = new bootstrap.Modal(document.getElementById('noticeDetailModal'));
+            noticeModal.show();
+        } catch (error) {
+            console.error('Error fetching notice details:', error);
+            showAlert(error.message, 'danger');
+        }
+    }
+    
+    // Function to save changes from the modal
+    async function saveNoticeChanges() {
+        const form = document.getElementById('noticeEditForm');
+        const formData = new FormData(form);
+        const noticeData = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/admin/notices/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(noticeData)
+            });
+
+            if (!response.ok) {
+                throw new Error('공지사항 수정에 실패했습니다.');
+            }
+
+            const result = await response.json();
+            if (result.success) {
+                const noticeModal = bootstrap.Modal.getInstance(document.getElementById('noticeDetailModal'));
+                if (noticeModal) {
+                    noticeModal.hide();
+                }
+                showAlert('공지사항이 성공적으로 수정되었습니다.', 'success');
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                showAlert(result.message || '공지사항 수정에 실패했습니다.', 'danger');
+            }
+        } catch (error) {
+            console.error('Error updating notice:', error);
+            showAlert(error.message, 'danger');
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const saveBtn = document.getElementById('saveNoticeChangesBtn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', saveNoticeChanges);
+        }
+    });
+
+</script>

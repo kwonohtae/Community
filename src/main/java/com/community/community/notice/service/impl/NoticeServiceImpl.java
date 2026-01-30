@@ -69,5 +69,26 @@ public class NoticeServiceImpl implements NoticeService {
     public int updateView(Long noticeId) {
     	return noticeMapper.updateView(noticeId); 
     }
+
+	@Override
+	public void updateNoticeStatus(NoticeRequestDto noticeRequestDto) {
+		noticeMapper.updateNoticeStatus(noticeRequestDto);
+	}
+
+	@Override
+	public void updateNotice(NoticeRequestDto noticeRequestDto) {
+		noticeMapper.updateNotice(noticeRequestDto);
+	}
+
+	@Override
+	public NoticeResponseDto findByIdForAdmin(Long noticeId) {
+		NoticeResponseDto notice = noticeMapper.findByIdForAdmin(noticeId);
+		if (notice != null) {
+			// 첨부파일 조회 및 설정
+			List<AttachmentsResponseDto> attachments = attachmentsService.findAllByPostId(notice.getNoticeId());
+			notice.setAttachments(attachments);
+		}
+		return notice;
+	}
     
 }
